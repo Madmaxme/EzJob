@@ -1,3 +1,6 @@
+import React from 'react';
+import { Linkedin, Instagram } from 'lucide-react';
+
 const Footer = () => {
   return (
     <footer className="bg-transparent text-brand p-6 mt-10">
@@ -7,20 +10,41 @@ const Footer = () => {
 
         {/* Quick Links */}
         <div className="mt-4 space-x-4">
-          <a href="/privacy" className="text-gray-600 hover:text-gray-900">Privacy Policy</a>
-          <a href="/terms" className="text-gray-600 hover:text-gray-900">Terms of Use</a>
-          <a href="/contact" className="text-gray-600 hover:text-gray-900">Contact</a>
+          <a href="/privacy" className="text-gray-600 hover:text-gray-900 transition-colors duration-200">
+            Privacy Policy
+          </a>
+          <a href="/terms" className="text-gray-600 hover:text-gray-900 transition-colors duration-200">
+            Terms of Use
+          </a>
+          <a href="/contact" className="text-gray-600 hover:text-gray-900 transition-colors duration-200">
+            Contact
+          </a>
         </div>
 
         {/* Social Media */}
-        <div className="mt-4 flex justify-center space-x-4">
-          <a href="#" className="text-gray-600 hover:text-gray-900">Facebook</a>
-          <a href="#" className="text-gray-600 hover:text-gray-900">Twitter</a>
-          <a href="#" className="text-gray-600 hover:text-gray-900">LinkedIn</a>
+        <div className="mt-4 flex justify-center space-x-6">
+          <a 
+            href="https://www.linkedin.com/company/ez_job/?viewAsMember=true" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-gray-600 hover:text-blue-700 transition-colors duration-200"
+          >
+            <Linkedin size={24} />
+          </a>
+          <a 
+            href="https://www.instagram.com/ezjob.app?utm_source=qr" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-gray-600 hover:text-pink-600 transition-colors duration-200"
+          >
+            <Instagram size={24} />
+          </a>
         </div>
 
         {/* Copyright */}
-        <p className="text-gray-500 text-sm mt-4">© {new Date().getFullYear()} EzJob. All Rights Reserved.</p>
+        <p className="text-gray-500 text-sm mt-4">
+          © {new Date().getFullYear()} EzJob. All Rights Reserved.
+        </p>
       </div>
     </footer>
   );
