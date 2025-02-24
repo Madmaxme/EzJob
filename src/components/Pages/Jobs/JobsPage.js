@@ -1,5 +1,6 @@
-import React from 'react';
-import { Search, MapPin, Clock, CircleDollarSign, Star } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MapPin, Clock, CircleDollarSign, Star } from 'lucide-react';
+import SearchSection from './SearchSection';
 
 // JobCard Component
 const JobCard = ({ job }) => {
@@ -57,62 +58,13 @@ const JobCard = ({ job }) => {
   );
 };
 
-// SearchBar Component
-const SearchBar = () => {
-  return (
-    <div className="bg-white rounded-xl shadow-sm flex items-center p-3 mb-6 border border-gray-100">
-      <Search className="text-gray-400 w-5 h-5 ml-3" />
-      <input
-        type="text"
-        placeholder="Search for side jobs near you..."
-        className="flex-1 px-4 py-2 outline-none text-gray-700 placeholder-gray-400"
-      />
-      <button className="bg-navy-900 text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition-colors">
-        Search
-      </button>
-    </div>
-  );
-};
-
-// Filters Component
-const Filters = () => {
-  return (
-    <div className="flex flex-wrap gap-4 mb-8">
-      <select className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-gray-700">
-        <option>Distance</option>
-        <option>Under 5km</option>
-        <option>5-10km</option>
-        <option>10-20km</option>
-        <option>20km+</option>
-      </select>
-      <select className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-gray-700">
-        <option>Payment</option>
-        <option>Under €50</option>
-        <option>€50-€100</option>
-        <option>€100-€200</option>
-        <option>€200+</option>
-      </select>
-      <select className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-gray-700">
-        <option>Duration</option>
-        <option>1-2 hours</option>
-        <option>Half day</option>
-        <option>Full day</option>
-        <option>Multiple days</option>
-      </select>
-      <select className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-gray-700">
-        <option>Type</option>
-        <option>Household</option>
-        <option>Moving</option>
-        <option>Garden</option>
-        <option>Delivery</option>
-      </select>
-    </div>
-  );
-};
 
 // Main JobsPage Component
 const JobsPage = () => {
-  const jobs = [
+  const [filteredJobs, setFilteredJobs] = useState([]);
+  const [totalJobs, setTotalJobs] = useState(0);
+  
+  const allJobs = [
     {
       id: 1,
       title: "Help Moving Furniture",
@@ -178,6 +130,68 @@ const JobsPage = () => {
     }
   ];
 
+  useEffect(() => {
+    setFilteredJobs(allJobs);
+    setTotalJobs(allJobs.length);
+  }, []);
+
+  const handleFilterChange = (filters) => {
+    let results = [...allJobs];
+    
+    // Search term filter
+    if (filters.searchTerm) {
+      const searchLower = filters.searchTerm.toLowerCase();
+      results = results.filter(job => 
+        job.title.toLowerCase().includes(searchLower) ||
+        job.description.toLowerCase().includes(searchLower) ||
+        job.tags.some(tag => tag.toLowerCase().includes(searchLower))
+      );
+    }
+
+    // Distance filter
+    if (filters.distance !== 'all') {
+      const [min, max] = filters.distance.split('-').map(num => 
+        num.includes('+') ? Infinity : Number(num)
+      );
+      results = results.filter(job => {
+        const jobDistance = parseFloat(job.distance);
+        return jobDistance >= min && jobDistance < (max || Infinity);
+      });
+    }
+
+    // Payment filter
+    if (filters.payment !== 'all') {
+      const [min, max] = filters.payment.split('-').map(num => 
+        num.includes('+') ? Infinity : Number(num)
+      );
+      const jobPayment = job => Number(job.payment.replace('€', ''));
+      results = results.filter(job => 
+        jobPayment(job) >= min && jobPayment(job) < (max || Infinity)
+      );
+    }
+
+    // Duration filter
+    if (filters.duration !== 'all') {
+      const [min, max] = filters.duration.split('-').map(num => 
+        num.includes('+') ? Infinity : Number(num)
+      );
+      results = results.filter(job => {
+        const jobHours = parseInt(job.duration);
+        return jobHours >= min && jobHours < (max || Infinity);
+      });
+    }
+
+    // Job type filter
+    if (filters.type !== 'all') {
+      results = results.filter(job =>
+        job.tags.includes(filters.type)
+      );
+    }
+
+    setFilteredJobs(results);
+    setTotalJobs(results.length);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-5xl mx-auto px-4 py-12">
@@ -186,15 +200,14 @@ const JobsPage = () => {
             Side Jobs Near You
           </h1>
           <p className="text-gray-600 text-lg">
-            {jobs.length} opportunities available in your area
+            {totalJobs} opportunities available in your area
           </p>
         </div>
 
-        <SearchBar />
-        <Filters />
+        <SearchSection onFilterChange={handleFilterChange} />
 
         <div className="grid grid-cols-1 gap-4">
-          {jobs.map(job => (
+          {filteredJobs.map(job => (
             <JobCard key={job.id} job={job} />
           ))}
         </div>
