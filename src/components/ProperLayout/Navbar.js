@@ -89,13 +89,9 @@ const Navbar = () => {
         }`}
       >
         <div className="flex justify-between items-center p-5 border-b border-gray-200">
-          <Link 
-            to="/" 
-            className="text-xl font-bold tracking-wide text-blue-600"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            EzJob
-          </Link>
+        <Link to="/" className="text-2xl font-bold tracking-wide text-navy-900 flex items-center">
+          <span className="text-blue-600">Ez</span>Job
+        </Link>
           <button 
             className="p-2 rounded-full hover:bg-gray-100"
             onClick={() => setIsMenuOpen(false)}
