@@ -127,6 +127,130 @@ const JobsPage = () => {
       tags: ["Pets", "Walking", "Regular"],
       verified: true,
       rating: "5.0"
+    },
+    {
+      id: 7,
+      title: "Paint Room & Small Repairs",
+      distance: "3.5 km away",
+      duration: "6-8 hours",
+      payment: "€160",
+      description: "Need help painting a living room and fixing some minor wall damage. Paint and tools will be provided. Experience preferred.",
+      tags: ["Household", "Painting", "Repairs"],
+      verified: true,
+      rating: "4.7"
+    },
+    {
+      id: 8,
+      title: "Bike Courier Needed",
+      distance: "1.2 km away",
+      duration: "2-3 hours",
+      payment: "€35",
+      description: "Looking for someone with a bicycle to deliver small packages within the city center. Must have own bike and be familiar with the area.",
+      tags: ["Delivery", "Cycling", "Quick"],
+      verified: false
+    },
+    {
+      id: 9,
+      title: "Computer Setup Help",
+      distance: "4.1 km away",
+      duration: "2 hours",
+      payment: "€40",
+      description: "Need assistance setting up new computer and transferring files. Basic tech knowledge required.",
+      tags: ["Technology", "Setup", "Indoor"],
+      verified: true
+    },
+    {
+      id: 10,
+      title: "Weekend Food Delivery",
+      distance: "2.9 km away",
+      duration: "4 hours",
+      payment: "€55",
+      description: "Restaurant needs extra delivery help for busy weekend. Must have car or scooter. Tips additional.",
+      tags: ["Delivery", "Food", "Weekend"],
+      verified: true,
+      rating: "4.6"
+    },
+    {
+      id: 11,
+      title: "Photography Assistant",
+      distance: "6.2 km away",
+      duration: "5 hours",
+      payment: "€100",
+      description: "Need assistant for weekend wedding shoot. Help with equipment and basic photography knowledge preferred.",
+      tags: ["Photography", "Event", "Creative"],
+      verified: true
+    },
+    {
+      id: 12,
+      title: "Organize Garage",
+      distance: "3.7 km away",
+      duration: "4-5 hours",
+      payment: "€70",
+      description: "Help needed to organize and clean garage. Includes sorting items, some heavy lifting, and cleaning.",
+      tags: ["Cleaning", "Organizing", "Physical Work"],
+      verified: false
+    },
+    {
+      id: 13,
+      title: "Language Exchange - German",
+      distance: "1.5 km away",
+      duration: "2 hours",
+      payment: "€30",
+      description: "Looking for native German speaker for conversation practice. Casual setting at local café.",
+      tags: ["Teaching", "Language", "Casual"],
+      verified: true,
+      rating: "5.0"
+    },
+    {
+      id: 14,
+      title: "Children's Party Helper",
+      distance: "4.4 km away",
+      duration: "3 hours",
+      payment: "€45",
+      description: "Need help with kids' birthday party. Tasks include setup, supervising games, and cleanup.",
+      tags: ["Event", "Children", "Party"],
+      verified: true
+    },
+    {
+      id: 15,
+      title: "Basic Plumbing Help",
+      distance: "2.3 km away",
+      duration: "1-2 hours",
+      payment: "€50",
+      description: "Need assistance fixing a leaky faucet and unclogging drain. Basic plumbing knowledge required.",
+      tags: ["Repairs", "Plumbing", "Quick"],
+      verified: true,
+      rating: "4.8"
+    },
+    {
+      id: 16,
+      title: "Grocery Shopping Assistant",
+      distance: "1.1 km away",
+      duration: "2 hours",
+      payment: "€25",
+      description: "Help needed with weekly grocery shopping and carrying groceries for elderly person.",
+      tags: ["Shopping", "Assistance", "Regular"],
+      verified: true
+    },
+    {
+      id: 17,
+      title: "Car Wash & Detailing",
+      distance: "3.9 km away",
+      duration: "3 hours",
+      payment: "€55",
+      description: "Looking for someone to wash and detail two cars. Supplies provided. Experience preferred.",
+      tags: ["Cleaning", "Automotive", "Outdoor"],
+      verified: false
+    },
+    {
+      id: 18,
+      title: "Moving Sale Helper",
+      distance: "5.5 km away",
+      duration: "6 hours",
+      payment: "€85",
+      description: "Need help organizing and running a moving sale. Tasks include setting up items, pricing, and handling transactions.",
+      tags: ["Sales", "Moving", "Organization"],
+      verified: true
     }
   ];
 
@@ -213,9 +337,6 @@ const JobsPage = () => {
         </div>
         
         <div className="mt-8 text-center">
-          <button className="bg-white text-navy-900 px-6 py-3 rounded-xl border border-gray-200 hover:border-teal-100 transition-colors">
-            Load More Jobs
-          </button>
         </div>
       </div>
     </div>
