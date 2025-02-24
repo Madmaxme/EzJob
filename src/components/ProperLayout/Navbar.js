@@ -36,7 +36,7 @@ const Navbar = () => {
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
         <Link to="/" className="text-2xl font-bold tracking-wide text-navy-900 flex items-center">
-          <span className="text-blue-600">Ez</span>Job
+          <span className="text-blue-400">Ez</span>Job
         </Link>
 
         {/* Desktop Navigation Links */}

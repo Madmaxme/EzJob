@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./components/ProperLayout/Layout";
-import Home from "./components/Pages/Home";
+import Home from "./components/Pages/Home/Home";
 import JobListing from "./components/Pages/Jobs/JobListing";
 import JobTemplate from "./components/Pages/Jobs/JobTemplate"
 
