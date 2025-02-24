@@ -1,5 +1,39 @@
 import React, { useState } from 'react';
-import { Search } from 'lucide-react';
+import { Search, Truck, Home, ShoppingBag, Wrench, Dog, Camera, Book, Leaf, PartyPopper, Briefcase } from 'lucide-react';
+
+export const categoryIcons = {
+  Moving: Truck,
+  Household: Home,
+  Delivery: ShoppingBag,
+  Repairs: Wrench,
+  Pets: Dog,
+  Creative: Camera,
+  Teaching: Book,
+  Gardening: Leaf,
+  Event: PartyPopper,
+  General: Briefcase
+};
+
+export const categoryMapping = {
+  'Moving': ['Moving', 'Furniture', 'Heavy Lifting'],
+  'Household': ['Household', 'Cleaning', 'Indoor'],
+  'Delivery': ['Delivery', 'Food'],
+  'Repairs': ['Repairs', 'Plumbing'],
+  'Pets': ['Pets', 'Dog'],
+  'Creative': ['Photography', 'Creative'],
+  'Teaching': ['Teaching', 'Language'],
+  'Gardening': ['Gardening', 'Outdoor'],
+  'Event': ['Event', 'Party'],
+};
+
+export const getJobCategory = (tags) => {
+  for (const [category, categoryTags] of Object.entries(categoryMapping)) {
+    if (tags.some(tag => categoryTags.includes(tag))) {
+      return category;
+    }
+  }
+  return 'General';
+};
 
 const SearchSection = ({ onFilterChange }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -7,7 +41,8 @@ const SearchSection = ({ onFilterChange }) => {
     distance: 'all',
     payment: 'all',
     duration: 'all',
-    type: 'all'
+    type: 'all',
+    category: 'all'
   });
 
   const handleSearchChange = (e) => {
@@ -57,6 +92,24 @@ const SearchSection = ({ onFilterChange }) => {
       <div className="flex flex-wrap gap-4">
         <select 
           className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-gray-700"
+          value={filters.category}
+          onChange={(e) => handleFilterChange('category', e.target.value)}
+        >
+          <option value="all">All Categories</option>
+          <option value="Moving">Moving</option>
+          <option value="Household">Household</option>
+          <option value="Delivery">Delivery</option>
+          <option value="Repairs">Repairs</option>
+          <option value="Pets">Pets</option>
+          <option value="Creative">Creative</option>
+          <option value="Teaching">Teaching</option>
+          <option value="Gardening">Gardening</option>
+          <option value="Event">Events</option>
+          <option value="General">General</option>
+        </select>
+
+        <select 
+          className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-gray-700"
           value={filters.distance}
           onChange={(e) => handleFilterChange('distance', e.target.value)}
         >
@@ -89,20 +142,6 @@ const SearchSection = ({ onFilterChange }) => {
           <option value="2-4">2-4 hours</option>
           <option value="4-6">4-6 hours</option>
           <option value="6+">6+ hours</option>
-        </select>
-
-        <select 
-          className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-gray-700"
-          value={filters.type}
-          onChange={(e) => handleFilterChange('type', e.target.value)}
-        >
-          <option value="all">All Types</option>
-          <option value="Moving">Moving</option>
-          <option value="Gardening">Gardening</option>
-          <option value="Cleaning">Cleaning</option>
-          <option value="Delivery">Delivery</option>
-          <option value="Event">Event</option>
-          <option value="Pets">Pets</option>
         </select>
       </div>
     </div>

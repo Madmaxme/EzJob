@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Clock, CircleDollarSign, Star } from 'lucide-react';
-import SearchSection from './SearchSection';
+import SearchSection, { categoryIcons, getJobCategory } from './SearchSection';
 
-// JobCard Component
+
+
 const JobCard = ({ job }) => {
+  const category = getJobCategory(job.tags);
+  const CategoryIcon = categoryIcons[category];
+
   return (
     <div className="bg-white rounded-xl p-6 mb-4 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 hover:border-teal-100 relative">
       <div className="flex justify-between items-start">
         <div className="flex-1">
           <div className="flex flex-wrap items-start gap-3 mb-3">
-            <h3 className="text-xl font-semibold text-navy-900 hover:text-teal-600 transition-colors cursor-pointer flex-1">
-              {job.title}
-            </h3>
+            <div className="flex items-center gap-3 flex-1">
+              <CategoryIcon className="w-6 h-6 text-navy-900" />
+              <h3 className="text-xl font-semibold text-navy-900 hover:text-teal-600 transition-colors cursor-pointer">
+                {job.title}
+              </h3>
+            </div>
             <div className="flex items-center gap-3">
               {job.verified && (
                 <span className="bg-teal-50 text-teal-600 px-3 py-1 rounded-full text-sm font-medium">
@@ -312,6 +319,26 @@ const JobsPage = () => {
       );
     }
 
+    // Category filter
+    if (filters.category !== 'all') {
+      results = results.filter(job => {
+        const categoryMapping = {
+          'Moving': ['Moving', 'Furniture', 'Heavy Lifting'],
+          'Household': ['Household', 'Cleaning', 'Indoor'],
+          'Delivery': ['Delivery', 'Food'],
+          'Repairs': ['Repairs', 'Plumbing'],
+          'Pets': ['Pets', 'Dog'],
+          'Creative': ['Photography', 'Creative'],
+          'Teaching': ['Teaching', 'Language'],
+          'Gardening': ['Gardening', 'Outdoor'],
+          'Event': ['Event', 'Party'],
+        };
+        
+        const categoryTags = categoryMapping[filters.category] || [];
+        return job.tags.some(tag => categoryTags.includes(tag));
+      });
+    }
+
     setFilteredJobs(results);
     setTotalJobs(results.length);
   };
@@ -337,6 +364,9 @@ const JobsPage = () => {
         </div>
         
         <div className="mt-8 text-center">
+          <button className="bg-white text-navy-900 px-6 py-3 rounded-xl border border-gray-200 hover:border-teal-100 transition-colors">
+            Load More Jobs
+          </button>
         </div>
       </div>
     </div>
