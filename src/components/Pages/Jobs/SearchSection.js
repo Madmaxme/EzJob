@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Truck, Home, ShoppingBag, Wrench, Dog, Camera, Book, Leaf, PartyPopper, Briefcase } from 'lucide-react';
+import { Search, Truck, Home, ShoppingBag, Wrench, Dog, Camera, Book, Leaf, PartyPopper, Briefcase, ChevronDown } from 'lucide-react';
 
 export const categoryIcons = {
   Moving: Truck,
@@ -45,6 +45,9 @@ const SearchSection = ({ onFilterChange }) => {
     category: 'all'
   });
 
+  // Single state to track which dropdown is open
+  const [openDropdown, setOpenDropdown] = useState(null);
+
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
@@ -68,6 +71,22 @@ const SearchSection = ({ onFilterChange }) => {
     onFilterChange(updatedFilters);
   };
 
+  const toggleDropdown = (dropdownName) => {
+    setOpenDropdown(openDropdown === dropdownName ? null : dropdownName);
+  };
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.dropdown-container')) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
   return (
     <div className="mb-8">
       {/* Search Bar */}
@@ -90,59 +109,163 @@ const SearchSection = ({ onFilterChange }) => {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-4">
-        <select 
-          className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-gray-700"
-          value={filters.category}
-          onChange={(e) => handleFilterChange('category', e.target.value)}
-        >
-          <option value="all">All Categories</option>
-          <option value="Moving">Moving</option>
-          <option value="Household">Household</option>
-          <option value="Delivery">Delivery</option>
-          <option value="Repairs">Repairs</option>
-          <option value="Pets">Pets</option>
-          <option value="Creative">Creative</option>
-          <option value="Teaching">Teaching</option>
-          <option value="Gardening">Gardening</option>
-          <option value="Event">Events</option>
-          <option value="General">General</option>
-        </select>
+        {/* Category Dropdown */}
+        <div className="relative dropdown-container">
+          <button
+            type="button"
+            onClick={() => toggleDropdown('category')}
+            className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-gray-700 w-40 text-left flex items-center justify-between whitespace-nowrap"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                {filters.category === 'all' ? (
+                  <Briefcase className="w-4 h-4" />
+                ) : (
+                  categoryIcons[filters.category] && React.createElement(categoryIcons[filters.category], { className: "w-4 h-4" })
+                )}
+              </div>
+              <span className="truncate">{filters.category === 'all' ? 'All Categories' : filters.category}</span>
+            </div>
+            <ChevronDown className={`w-4 h-4 transition-transform flex-shrink-0 ${openDropdown === 'category' ? 'transform rotate-180' : ''}`} />
+          </button>
 
-        <select 
-          className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-gray-700"
-          value={filters.distance}
-          onChange={(e) => handleFilterChange('distance', e.target.value)}
-        >
-          <option value="all">All Distances</option>
-          <option value="0-5">Under 5km</option>
-          <option value="5-10">5-10km</option>
-          <option value="10-20">10-20km</option>
-          <option value="20+">20km+</option>
-        </select>
+          {openDropdown === 'category' && (
+            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+              <div 
+                className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                onClick={() => {
+                  handleFilterChange('category', 'all');
+                  setOpenDropdown(null);
+                }}
+              >
+                <div className="w-5 h-5 flex items-center justify-center">
+                  <Briefcase className="w-4 h-4" />
+                </div>
+                <span>All Categories</span>
+              </div>
+              {Object.entries(categoryIcons).map(([category, Icon]) => (
+                <div
+                  key={category}
+                  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                  onClick={() => {
+                    handleFilterChange('category', category);
+                    setOpenDropdown(null);
+                  }}
+                >
+                  <div className="w-5 h-5 flex items-center justify-center">
+                    <Icon className="w-4 h-4" />
+                  </div>
+                  <span>{category}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
-        <select 
-          className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-gray-700"
-          value={filters.payment}
-          onChange={(e) => handleFilterChange('payment', e.target.value)}
-        >
-          <option value="all">All Payments</option>
-          <option value="0-50">Under €50</option>
-          <option value="50-100">€50-€100</option>
-          <option value="100-200">€100-€200</option>
-          <option value="200+">€200+</option>
-        </select>
+        {/* Distance Dropdown */}
+        <div className="relative dropdown-container">
+          <button
+            type="button"
+            onClick={() => toggleDropdown('distance')}
+            className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-gray-700 w-40 text-left flex items-center justify-between"
+          >
+            <span>{filters.distance === 'all' ? 'All Distances' : `Under ${filters.distance.split('-')[1] || '20+'}km`}</span>
+            <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'distance' ? 'transform rotate-180' : ''}`} />
+          </button>
 
-        <select 
-          className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-gray-700"
-          value={filters.duration}
-          onChange={(e) => handleFilterChange('duration', e.target.value)}
-        >
-          <option value="all">All Durations</option>
-          <option value="1-2">1-2 hours</option>
-          <option value="2-4">2-4 hours</option>
-          <option value="4-6">4-6 hours</option>
-          <option value="6+">6+ hours</option>
-        </select>
+          {openDropdown === 'distance' && (
+            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
+              {[
+                { value: 'all', label: 'All Distances' },
+                { value: '0-5', label: 'Under 5km' },
+                { value: '5-10', label: '5-10km' },
+                { value: '10-20', label: '10-20km' },
+                { value: '20+', label: '20km+' }
+              ].map(option => (
+                <div 
+                  key={option.value}
+                  className="px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                  onClick={() => {
+                    handleFilterChange('distance', option.value);
+                    setOpenDropdown(null);
+                  }}
+                >
+                  {option.label}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Payment Dropdown */}
+        <div className="relative dropdown-container">
+          <button
+            type="button"
+            onClick={() => toggleDropdown('payment')}
+            className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-gray-700 w-40 text-left flex items-center justify-between"
+          >
+            <span>{filters.payment === 'all' ? 'All Payments' : `Under €${filters.payment.split('-')[1] || '200+'}`}</span>
+            <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'payment' ? 'transform rotate-180' : ''}`} />
+          </button>
+
+          {openDropdown === 'payment' && (
+            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
+              {[
+                { value: 'all', label: 'All Payments' },
+                { value: '0-50', label: 'Under €50' },
+                { value: '50-100', label: '€50-€100' },
+                { value: '100-200', label: '€100-€200' },
+                { value: '200+', label: '€200+' }
+              ].map(option => (
+                <div 
+                  key={option.value}
+                  className="px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                  onClick={() => {
+                    handleFilterChange('payment', option.value);
+                    setOpenDropdown(null);
+                  }}
+                >
+                  {option.label}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Duration Dropdown */}
+        <div className="relative dropdown-container">
+          <button
+            type="button"
+            onClick={() => toggleDropdown('duration')}
+            className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-gray-700 w-40 text-left flex items-center justify-between"
+          >
+            <span>{filters.duration === 'all' ? 'All Durations' : `${filters.duration} hours`}</span>
+            <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'duration' ? 'transform rotate-180' : ''}`} />
+          </button>
+
+          {openDropdown === 'duration' && (
+            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
+              {[
+                { value: 'all', label: 'All Durations' },
+                { value: '1-2', label: '1-2 hours' },
+                { value: '2-4', label: '2-4 hours' },
+                { value: '4-6', label: '4-6 hours' },
+                { value: '6+', label: '6+ hours' }
+              ].map(option => (
+                <div 
+                  key={option.value}
+                  className="px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                  onClick={() => {
+                    handleFilterChange('duration', option.value);
+                    setOpenDropdown(null);
+                  }}
+                >
+                  {option.label}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
