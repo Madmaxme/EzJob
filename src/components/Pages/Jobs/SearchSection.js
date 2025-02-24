@@ -1,39 +1,6 @@
 import React, { useState } from 'react';
-import { Search, Truck, Home, ShoppingBag, Wrench, Dog, Camera, Book, Leaf, PartyPopper, Briefcase, ChevronDown } from 'lucide-react';
-
-export const categoryIcons = {
-  Moving: Truck,
-  Household: Home,
-  Delivery: ShoppingBag,
-  Repairs: Wrench,
-  Pets: Dog,
-  Creative: Camera,
-  Teaching: Book,
-  Gardening: Leaf,
-  Event: PartyPopper,
-  General: Briefcase
-};
-
-export const categoryMapping = {
-  'Moving': ['Moving', 'Furniture', 'Heavy Lifting'],
-  'Household': ['Household', 'Cleaning', 'Indoor'],
-  'Delivery': ['Delivery', 'Food'],
-  'Repairs': ['Repairs', 'Plumbing'],
-  'Pets': ['Pets', 'Dog'],
-  'Creative': ['Photography', 'Creative'],
-  'Teaching': ['Teaching', 'Language'],
-  'Gardening': ['Gardening', 'Outdoor'],
-  'Event': ['Event', 'Party'],
-};
-
-export const getJobCategory = (tags) => {
-  for (const [category, categoryTags] of Object.entries(categoryMapping)) {
-    if (tags.some(tag => categoryTags.includes(tag))) {
-      return category;
-    }
-  }
-  return 'General';
-};
+import { Search, ChevronDown } from 'lucide-react';
+import { categoryIcons } from './JobData';
 
 const SearchSection = ({ onFilterChange }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -119,7 +86,7 @@ const SearchSection = ({ onFilterChange }) => {
             <div className="flex items-center gap-2 min-w-0">
               <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
                 {filters.category === 'all' ? (
-                  <Briefcase className="w-4 h-4" />
+                  React.createElement(categoryIcons.General, { className: "w-4 h-4" })
                 ) : (
                   categoryIcons[filters.category] && React.createElement(categoryIcons[filters.category], { className: "w-4 h-4" })
                 )}
@@ -139,24 +106,26 @@ const SearchSection = ({ onFilterChange }) => {
                 }}
               >
                 <div className="w-5 h-5 flex items-center justify-center">
-                  <Briefcase className="w-4 h-4" />
+                  {React.createElement(categoryIcons.General, { className: "w-4 h-4" })}
                 </div>
                 <span>All Categories</span>
               </div>
               {Object.entries(categoryIcons).map(([category, Icon]) => (
-                <div
-                  key={category}
-                  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer"
-                  onClick={() => {
-                    handleFilterChange('category', category);
-                    setOpenDropdown(null);
-                  }}
-                >
-                  <div className="w-5 h-5 flex items-center justify-center">
-                    <Icon className="w-4 h-4" />
+                category !== 'General' && (
+                  <div
+                    key={category}
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                    onClick={() => {
+                      handleFilterChange('category', category);
+                      setOpenDropdown(null);
+                    }}
+                  >
+                    <div className="w-5 h-5 flex items-center justify-center">
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <span>{category}</span>
                   </div>
-                  <span>{category}</span>
-                </div>
+                )
               ))}
             </div>
           )}
