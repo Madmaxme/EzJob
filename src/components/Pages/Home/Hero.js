@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
   return (
@@ -18,10 +19,14 @@ const Hero = () => {
             <p className="text-gray-600 text-xl mb-8">
               Apply in seconds. Get hired in minutes.
             </p>
-            <button className="bg-[#0A0B26] text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-opacity-90 transition-colors inline-flex items-center gap-2">
+            {/* Updated button with Link to /auth */}
+            <Link
+              to="/Auth"
+              className="bg-[#0A0B26] text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-opacity-90 transition-colors inline-flex items-center gap-2"
+            >
               Start free trial
               <ArrowRight size={20} />
-            </button>
+            </Link>
           </div>
         </div>
       </div>

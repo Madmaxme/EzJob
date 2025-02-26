@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Users, MessageSquare, Briefcase, CheckCircle, DollarSign } from 'lucide-react';
+import { Search, Users, MessageSquare, Briefcase, DollarSign } from 'lucide-react';
 
 const HowItWorks = () => {
   const [activeTab, setActiveTab] = useState('seekers');
