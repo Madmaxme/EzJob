@@ -5,6 +5,7 @@ import FeaturedGigs from './FeaturedGigs';
 import Testimonials from './Testimonials';
 import Stats from './Stats';
 import CTA from './CTA';
+import FrequentlyAskedQuestions from './FrequentlyAskedQuestions';
 
 const Home = () => {
   return (
@@ -25,6 +26,8 @@ const Home = () => {
       
       {/* Section 5: Stats with black background */}
       <Stats />
+
+      <FrequentlyAskedQuestions />
       
       {/* Section 6: CTA with gradient background */}
       <CTA />

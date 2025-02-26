@@ -22,6 +22,8 @@ export const AppContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState({});
   const [error, setError] = useState('');
+  // Add redirectPath state to track where to redirect after logout
+  const [redirectPath, setRedirectPath] = useState(null);
 
   // Sign up function
   const signup = async (email, password) => {
@@ -46,8 +48,19 @@ export const AppContextProvider = ({ children }) => {
   };
 
   // Logout function
-  const logout = () => {
-    return signOut(auth);
+  const logout = (callback) => {
+    setRedirectPath('/'); // Set redirect path to homepage
+    return signOut(auth)
+      .then(() => {
+        // Call callback after successful logout if provided
+        if (callback && typeof callback === 'function') {
+          callback();
+        }
+      })
+      .catch((error) => {
+        setError('Failed to log out');
+        console.error('Logout error:', error);
+      });
   };
 
   // Listen for auth state changes
@@ -67,13 +80,16 @@ export const AppContextProvider = ({ children }) => {
     userData,
     loading,
     error,
+    redirectPath, // Expose redirectPath to components
     signup,
     login,
     logout,
     // Add a utility function to update user data
     updateUserData: (data) => {
       setUserData(prev => ({...prev, ...data}))
-    }
+    },
+    // Reset redirect path after it's been used
+    resetRedirect: () => setRedirectPath(null)
   };
 
   return (

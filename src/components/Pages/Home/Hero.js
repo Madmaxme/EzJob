@@ -24,7 +24,7 @@ const Hero = () => {
               to="/Auth"
               className="bg-[#0A0B26] text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-opacity-90 transition-colors inline-flex items-center gap-2"
             >
-              Start free trial
+              Join Now
               <ArrowRight size={20} />
             </Link>
           </div>

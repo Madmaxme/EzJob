@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAppContext } from "../../AppContext"; // Import AppContext
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { currentUser, logout } = useAppContext(); // Get authentication status
+  const { currentUser, logout, redirectPath, resetRedirect } = useAppContext();
+  const navigate = useNavigate();
 
   // Define navigation links
   const navLinks = [
@@ -14,6 +15,21 @@ const Navbar = () => {
     { title: "Contact", path: "/contact", requiresAuth: false },
     // Add new links here - format: { title: "Link Name", path: "/path", requiresAuth: true/false }
   ];
+
+  // Handle logout and navigation
+  const handleLogout = () => {
+    logout(() => {
+      navigate('/');
+    });
+  };
+
+  // Check for redirectPath from context and navigate if needed
+  useEffect(() => {
+    if (redirectPath) {
+      navigate(redirectPath);
+      resetRedirect();
+    }
+  }, [redirectPath, navigate, resetRedirect]);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -57,7 +73,7 @@ const Navbar = () => {
         <div className="hidden md:flex">
           {currentUser ? (
             <button
-              onClick={logout}
+              onClick={handleLogout}
               className="text-black border border-black px-5 py-2 rounded-lg font-semibold hover:bg-black hover:text-white transition"
             >
               Sign Out
@@ -125,7 +141,7 @@ const Navbar = () => {
           {currentUser ? (
             <button
               onClick={() => {
-                logout();
+                handleLogout();
                 setIsMenuOpen(false);
               }}
               className="text-black border border-black px-5 py-2 rounded-lg font-semibold hover:bg-black hover:text-white transition"

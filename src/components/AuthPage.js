@@ -6,7 +6,7 @@ import { ArrowRight } from 'lucide-react';
 
 const AuthPage = () => {
   // State for form display (login or signup)
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
   
   // Form fields
   const [email, setEmail] = useState('');
