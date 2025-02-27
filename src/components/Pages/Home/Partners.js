@@ -32,7 +32,7 @@ const Partners = () => {
         
         {/* Text line below partners */}
         <p className="text-gray-500 text-sm text-center mt-6">
-          Local organizations across the country trust EzJob to connect communities with flexible work.
+          Local organizations worldwide trust EzJob to connect communities with flexible work.
         </p>
       </div>
     </div>

@@ -3,6 +3,7 @@ import { MapPin, Clock, CircleDollarSign, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import SearchSection from './SearchSection';
 import { allJobs, categoryIcons, getJobCategory } from './JobData';
+import ListingWaitlist from './ListingWaitlist';
 
 const JobCard = ({ job, onClick }) => {
   const category = getJobCategory(job.tags);
@@ -137,7 +138,7 @@ const JobListing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-pink-50">
        <div className="max-w-5xl mx-auto px-4 pt-32 pb-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-navy-900 mb-3">
@@ -166,6 +167,7 @@ const JobListing = () => {
           </button>
         </div>
       </div>
+      <ListingWaitlist />
     </div>
   );
 };
