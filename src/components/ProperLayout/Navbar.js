@@ -13,7 +13,6 @@ const Navbar = () => {
     { title: "Find Jobs", path: "/listing", requiresAuth: true },
     { title: "Post a Job", path: "/post", requiresAuth: true },
     { title: "Join our Waitlist", path: "/waitlist", requiresAuth: false },
-    { title: "Contact", path: "/contact", requiresAuth: false },
 
     // Add new links here - format: { title: "Link Name", path: "/path", requiresAuth: true/false }
   ];
@@ -99,10 +98,10 @@ const Navbar = () => {
           }}
         >
           <span className="sr-only">Open menu</span>
-          <div className="relative w-6 h-5">
-            <span className={`absolute h-0.5 w-6 bg-gray-900 transform transition ${isMenuOpen ? "rotate-45 translate-y-2.5" : ""}`} />
-            <span className={`absolute h-0.5 bg-gray-900 transform transition ${isMenuOpen ? "opacity-0" : "opacity-100"}`} />
-            <span className={`absolute h-0.5 w-6 bg-gray-900 transform transition ${isMenuOpen ? "-rotate-45 -translate-y-2.5" : ""}`} />
+          <div className="relative w-6 h-5 flex flex-col justify-between">
+            <span className={`h-0.5 w-6 bg-gray-900 transform transition duration-300 ${isMenuOpen ? "rotate-45 translate-y-2" : ""}`} />
+            <span className={`h-0.5 w-6 bg-gray-900 transform transition duration-300 ${isMenuOpen ? "opacity-0" : "opacity-100"}`} />
+            <span className={`h-0.5 w-6 bg-gray-900 transform transition duration-300 ${isMenuOpen ? "-rotate-45 -translate-y-2" : ""}`} />
           </div>
         </button>
       </div>

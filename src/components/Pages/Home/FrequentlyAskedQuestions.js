@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 const FrequentlyAskedQuestions = () => {
   // State to track which FAQ item is expanded
@@ -75,13 +74,6 @@ const FrequentlyAskedQuestions = () => {
               )}
             </div>
           ))}
-        </div>
-        
-        <div className="mt-12 text-center">
-          <p className="text-gray-600 mb-4">Still have questions?</p>
-          <Link to="/contact" className="px-6 py-3 bg-teal-500 text-white font-medium rounded-lg hover:bg-teal-600 transition-colors">
-            Contact Support
-          </Link>
         </div>
       </div>
     </div>

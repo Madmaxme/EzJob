@@ -41,7 +41,7 @@ const CTA = () => {
                   Find gigs now
                   <ArrowRight size={20} />
                 </a>
-                <a href="/listing" className="border-2 border-gray-300 text-gray-800 px-6 py-3 rounded-lg text-lg font-medium hover:bg-gray-100 transition-colors inline-flex items-center justify-center">
+                <a href="/post" className="border-2 border-gray-300 text-gray-800 px-6 py-3 rounded-lg text-lg font-medium hover:bg-gray-100 transition-colors inline-flex items-center justify-center">
                   Post a gig
                 </a>
               </div>
