@@ -42,13 +42,9 @@ const SurveySelector = ({ onSelectSurvey }) => {
           </div>
         </div>
         
-        <p className="text-lg text-gray-700 mb-10 max-w-2xl mx-auto">
-          Please select which survey is most relevant to you so we can better understand your needs.
-        </p>
-        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <button 
-            onClick={() => onSelectSurvey('seeker')}
+            onClick={() => onSelectSurvey('offerer')}
             className="bg-white hover:bg-gray-50 transition-colors p-8 rounded-lg flex flex-col items-center border border-teal-200 hover:border-teal-400 shadow-md hover:shadow-lg"
           >
             <UserRound size={48} className="text-teal-500 mb-4" />
@@ -57,7 +53,7 @@ const SurveySelector = ({ onSelectSurvey }) => {
           </button>
           
           <button 
-            onClick={() => onSelectSurvey('offerer')}
+            onClick={() => onSelectSurvey('seeker')}
             className="bg-white hover:bg-gray-50 transition-colors p-8 rounded-lg flex flex-col items-center border border-teal-200 hover:border-teal-400 shadow-md hover:shadow-lg"
           >
             <Briefcase size={48} className="text-teal-500 mb-4" />

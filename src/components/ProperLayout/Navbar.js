@@ -12,7 +12,9 @@ const Navbar = () => {
     { title: "Home", path: "/", requiresAuth: false },
     { title: "Find Jobs", path: "/listing", requiresAuth: true },
     { title: "Post a Job", path: "/post", requiresAuth: true },
+    { title: "Join our Waitlist", path: "/waitlist", requiresAuth: false },
     { title: "Contact", path: "/contact", requiresAuth: false },
+
     // Add new links here - format: { title: "Link Name", path: "/path", requiresAuth: true/false }
   ];
 

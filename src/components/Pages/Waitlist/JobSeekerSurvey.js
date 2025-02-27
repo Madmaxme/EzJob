@@ -1,14 +1,41 @@
 import React, { useState } from 'react';
 import { ChevronLeft, Star } from 'lucide-react';
 
-const JobSeekerSurvey = ({ onBack, onSubmit }) => {
+// Define mapping between values and full text
+const JOB_TYPES_MAPPING = {
+  'remote': 'Remote freelance work (writing, design, programming, etc.)',
+  'inPerson': 'In-person tasks (delivery, event help, tutoring, etc.)',
+  'partTime': 'Part-time jobs with flexible hours',
+  'oneTime': 'One-time gigs for quick extra income',
+  'other': 'Other'
+};
+
+const REASONS_MAPPING = {
+  'easier': 'Easier and faster job search',
+  'payment': 'Better payment security',
+  'flexible': 'More flexible and short-term job options',
+  'community': 'A community and networking opportunities',
+  'other': 'Other'
+};
+
+const WILL_PAY_MAPPING = {
+  'yes': 'Yes',
+  'no': 'No',
+  'maybe': 'Maybe, depending on the features'
+};
+
+const JobSeekerSurvey = ({ onBack, onSubmit, isSubmitting = false }) => {
   const [formData, setFormData] = useState({
-    role: '',
+    email: '',
     jobTypes: [],
+    otherJobType: '',
     reasons: [],
+    otherReason: '',
     willPay: '',
     feedback: ''
   });
+  
+  const [emailError, setEmailError] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -42,9 +69,61 @@ const JobSeekerSurvey = ({ onBack, onSubmit }) => {
     });
   };
 
+  const validateEmail = (email) => {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  };
+  
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    
+    // Validate email
+    if (!formData.email) {
+      setEmailError('Email is required');
+      return;
+    }
+    
+    if (!validateEmail(formData.email)) {
+      setEmailError('Please enter a valid email address');
+      return;
+    }
+    
+    setEmailError('');
+
+    // Prepare submission data with full text values
+    const submissionData = {
+      email: formData.email,
+      
+      // Question 2: What types of jobs interest you the most?
+      "What types of jobs interest you the most?": 
+        formData.jobTypes.length > 0 
+          ? formData.jobTypes.map(type => 
+              type === 'other' && formData.otherJobType
+                ? `Other: ${formData.otherJobType}`
+                : JOB_TYPES_MAPPING[type]
+            )
+          : ['Not answered'],
+      
+      // Question 2: What would make you use this platform instead of other job-finding methods?
+      "What would make you use this platform instead of other job-finding methods?": 
+        formData.reasons.length > 0
+          ? formData.reasons.map(reason => 
+              reason === 'other' && formData.otherReason
+                ? `Other: ${formData.otherReason}`
+                : REASONS_MAPPING[reason]
+            )
+          : ['Not answered'],
+      
+      // Question 3: Would you be willing to pay for premium features?
+      "Would you be willing to pay for premium features?": 
+        formData.willPay ? WILL_PAY_MAPPING[formData.willPay] : 'Not answered',
+      
+      // Question 4: Suggestions or additional comments
+      "Suggestions or additional comments": 
+        formData.feedback || 'No feedback provided'
+    };
+    
+    onSubmit(submissionData);
   };
 
   const handleBackClick = () => {
@@ -77,43 +156,23 @@ const JobSeekerSurvey = ({ onBack, onSubmit }) => {
 
           <form onSubmit={handleSubmit}>
             <div className="mb-8">
-              <p className="font-medium text-gray-900 mb-3">1. What is your role on our platform?</p>
-              <div className="space-y-2">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="role"
-                    value="offer"
-                    onChange={handleRadioChange}
-                    className="mr-2 accent-teal-500"
-                  />
-                  <span>I offer jobs</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="role"
-                    value="complete"
-                    onChange={handleRadioChange}
-                    className="mr-2 accent-teal-500"
-                  />
-                  <span>I complete jobs</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="role"
-                    value="both"
-                    onChange={handleRadioChange}
-                    className="mr-2 accent-teal-500"
-                  />
-                  <span>Both</span>
-                </label>
-              </div>
+              <p className="font-medium text-gray-900 mb-3">Email Address <span className="text-red-500">*</span></p>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="your@email.com"
+                className={`w-full p-3 border ${emailError ? 'border-red-500' : 'border-gray-300'} rounded focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500`}
+                required
+              />
+              {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
+              <p className="text-gray-500 text-sm mt-1">We'll notify you when we launch and you'll get early access.</p>
             </div>
 
+
             <div className="mb-8">
-              <p className="font-medium text-gray-900 mb-3">2. What types of jobs interest you the most?</p>
+              <p className="font-medium text-gray-900 mb-3">1. What types of jobs interest you the most?</p>
               <div className="space-y-2">
                 <label className="flex items-center">
                   <input
@@ -167,6 +226,9 @@ const JobSeekerSurvey = ({ onBack, onSubmit }) => {
                 </label>
                 <input
                   type="text"
+                  name="otherJobType"
+                  value={formData.otherJobType}
+                  onChange={handleInputChange}
                   className="ml-6 w-64 p-2 border border-gray-300 rounded focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
                   placeholder="Please specify"
                 />
@@ -174,7 +236,7 @@ const JobSeekerSurvey = ({ onBack, onSubmit }) => {
             </div>
 
             <div className="mb-8">
-              <p className="font-medium text-gray-900 mb-3">3. What would make you use this platform instead of other job-finding methods?</p>
+              <p className="font-medium text-gray-900 mb-3">2. What would make you use this platform instead of other job-finding methods?</p>
               <div className="space-y-2">
                 <label className="flex items-center">
                   <input
@@ -228,6 +290,9 @@ const JobSeekerSurvey = ({ onBack, onSubmit }) => {
                 </label>
                 <input
                   type="text"
+                  name="otherReason"
+                  value={formData.otherReason}
+                  onChange={handleInputChange}
                   className="ml-6 w-64 p-2 border border-gray-300 rounded focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
                   placeholder="Please specify"
                 />
@@ -235,7 +300,7 @@ const JobSeekerSurvey = ({ onBack, onSubmit }) => {
             </div>
 
             <div className="mb-8">
-              <p className="font-medium text-gray-900 mb-3">4. Would you be willing to pay for premium features (such as exclusive job postings, faster applications, or enhanced profiles)?</p>
+              <p className="font-medium text-gray-900 mb-3">3. Would you be willing to pay for premium features (such as exclusive job postings, faster applications, or enhanced profiles)?</p>
               <div className="space-y-2">
                 <label className="flex items-center">
                   <input
@@ -271,10 +336,11 @@ const JobSeekerSurvey = ({ onBack, onSubmit }) => {
             </div>
 
             <div className="mb-8">
-              <p className="font-medium text-gray-900 mb-3">5. Do you have any suggestions or additional comments?</p>
+              <p className="font-medium text-gray-900 mb-3">4. Do you have any suggestions or additional comments?</p>
               <textarea
                 name="feedback"
                 rows={4}
+                value={formData.feedback}
                 className="w-full p-3 border border-gray-300 rounded focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
                 placeholder="Your answer"
                 onChange={handleInputChange}
@@ -284,9 +350,10 @@ const JobSeekerSurvey = ({ onBack, onSubmit }) => {
             <div className="text-center border-t border-gray-200 pt-6">
               <button
                 type="submit"
-                className="bg-teal-500 hover:bg-teal-400 text-white px-8 py-3 rounded-lg font-medium transition-colors"
+                disabled={isSubmitting}
+                className={`bg-teal-500 hover:bg-teal-400 text-white px-8 py-3 rounded-lg font-medium transition-colors ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
               >
-                Submit Feedback
+                {isSubmitting ? 'Submitting...' : 'Submit Feedback'}
               </button>
               <p className="text-sm text-gray-500 italic mt-4">🎉 Thank You Message 🎉</p>
               <p className="text-sm text-gray-600 mt-2">

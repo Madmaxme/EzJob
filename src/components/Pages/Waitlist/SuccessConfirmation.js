@@ -1,8 +1,8 @@
 import React from 'react';
-import { CheckCircle, Star } from 'lucide-react';
+import { CheckCircle, Star, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const SuccessConfirmation = () => {
+const SuccessConfirmation = ({ email }) => {
   return (
     <div className="min-h-screen w-full bg-pink-50 text-gray-800 pt-24 pb-16 flex items-center justify-center">
       <div className="max-w-4xl mx-auto px-4 text-center">
@@ -25,6 +25,15 @@ const SuccessConfirmation = () => {
             <span className="text-yellow-600 uppercase font-semibold tracking-wider text-sm">Limited Alpha Access</span>
             <Star className="text-yellow-500 fill-yellow-500" size={20} />
           </div>
+          
+          {email && (
+            <div className="flex items-center justify-center mb-6 bg-teal-50 p-4 rounded-lg border border-teal-200">
+              <Mail className="text-teal-500 mr-2" size={20} />
+              <p className="text-gray-700">
+                We'll send updates to: <span className="font-medium">{email}</span>
+              </p>
+            </div>
+          )}
           
           <p className="text-gray-600 mb-8">
             Remember, as one of our early supporters, you'll receive a full year of premium features for free when we launch!
