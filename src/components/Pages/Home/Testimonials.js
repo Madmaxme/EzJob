@@ -43,7 +43,7 @@ const Testimonials = () => {
   };
 
   return (
-    <section className="py-24 bg-black relative">
+    <section className="py-24 bg-[#0A0B26] relative">
       {/* Background pattern */}
       <div className="absolute top-0 left-0 w-full h-full opacity-10">
         <div className="absolute top-10 left-10">

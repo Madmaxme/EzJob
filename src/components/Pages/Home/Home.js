@@ -7,32 +7,22 @@ import Stats from './Stats';
 import CTA from './CTA';
 import FrequentlyAskedQuestions from './FrequentlyAskedQuestions';
 import Partners from './Partners';
+import Waitlist from './Waitlist';
 
 const Home = () => {
   return (
     <div className="w-full">
-      {/* Section 1: Hero with pink background */}
       <div className="bg-pink-50">
         <Hero />
         <Partners />
+        <Waitlist />
+        <HowItWorks />
+        <FeaturedGigs />
+        <Testimonials />
+        <Stats />
+        <FrequentlyAskedQuestions />
+        <CTA />
       </div>
-      
-      {/* Section 2: How It Works with gradient background */}
-      <HowItWorks />
-      
-      {/* Section 3: Featured Gigs with white background */}
-      <FeaturedGigs />
-      
-      {/* Section 4: Testimonials with black background */}
-      <Testimonials />
-      
-      {/* Section 5: Stats with black background */}
-      <Stats />
-
-      <FrequentlyAskedQuestions />
-      
-      {/* Section 6: CTA with gradient background */}
-      <CTA />
     </div>
   );
 };

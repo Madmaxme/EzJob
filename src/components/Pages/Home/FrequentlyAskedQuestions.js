@@ -36,7 +36,7 @@ const FrequentlyAskedQuestions = () => {
   ];
 
   return (
-    <div className="w-full bg-pink-50 py-20">
+    <div className="w-full bg-pink-50 pt-20 pb-4">
       <div className="max-w-4xl mx-auto px-4">
         <div className="mb-12 text-center">
           <h2 className="text-4xl font-medium text-navy-900 mb-4">

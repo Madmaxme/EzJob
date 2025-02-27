@@ -138,7 +138,7 @@ const JobListing = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto px-4 py-12">
+       <div className="max-w-5xl mx-auto px-4 pt-32 pb-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-navy-900 mb-3">
             Side Jobs Near You

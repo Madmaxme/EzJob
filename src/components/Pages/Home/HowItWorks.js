@@ -5,7 +5,7 @@ const HowItWorks = () => {
   const [activeTab, setActiveTab] = useState('seekers');
 
   return (
-    <div className="w-full bg-gradient-to-b from-pink-50 to-pink-100 py-24">
+    <div className="w-full bg-pink-50 py-24">
       <div className="max-w-6xl mx-auto px-4">
         <div className="mb-12">
           <h2 className="text-4xl md:text-5xl text-center font-medium text-navy-900 mb-4">
