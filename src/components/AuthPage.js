@@ -83,7 +83,7 @@ const AuthPage = () => {
             {isLogin ? (
               <span>Welcome <span className="bg-teal-100 px-4 py-1 rounded-md">back</span></span>
             ) : (
-              <span>Join <span className="bg-teal-100 px-4 py-1 rounded-md">EzJob</span> today</span>
+              <span>Join <span className="bg-teal-100 px-4 py-1 rounded-md">Ez</span> today</span>
             )}
           </h2>
         </div>

@@ -6,6 +6,7 @@ import Testimonials from './Testimonials';
 import Stats from './Stats';
 import CTA from './CTA';
 import FrequentlyAskedQuestions from './FrequentlyAskedQuestions';
+import Partners from './Partners';
 
 const Home = () => {
   return (
@@ -13,6 +14,7 @@ const Home = () => {
       {/* Section 1: Hero with pink background */}
       <div className="bg-pink-50">
         <Hero />
+        <Partners />
       </div>
       
       {/* Section 2: How It Works with gradient background */}
