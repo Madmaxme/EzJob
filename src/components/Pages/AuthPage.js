@@ -1,6 +1,6 @@
 // src/components/AuthPage.js
 import React, { useState } from 'react';
-import { useAppContext } from '../AppContext';
+import { useAppContext } from '../../AppContext';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
