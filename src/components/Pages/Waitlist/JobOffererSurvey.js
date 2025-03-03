@@ -507,12 +507,6 @@ const JobOffererSurvey = ({ onBack, onSubmit, isSubmitting = false }) => {
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Feedback'}
               </button>
-              <p className="text-sm text-gray-500 italic mt-4">🎉 Thank You Message 🎉</p>
-              <p className="text-sm text-gray-600 mt-2">
-                Thank you for your valuable feedback! We truly appreciate your input and will use it to improve 
-                our platform. If you have any further suggestions or questions, feel free to reach out to us anytime. 🚀 
-                We wish you great success using our platform, and thank you for being part of our community!
-              </p>
             </div>
           </form>
         </div>
