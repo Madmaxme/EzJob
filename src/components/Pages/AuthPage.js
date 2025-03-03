@@ -1,5 +1,5 @@
-// src/components/AuthPage.js
-import React, { useState } from 'react';
+// src/components/Pages/AuthPage.js
+import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../../AppContext';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
@@ -19,8 +19,26 @@ const AuthPage = () => {
   const [formError, setFormError] = useState('');
   
   // Get auth methods from context
-  const { signup, login, error, updateUserData } = useAppContext();
+  const { signup, login, error, updateUserData, currentUser, userData, resetRedirect } = useAppContext();
   const navigate = useNavigate();
+  
+  // Check if user is already logged in and redirect accordingly
+  useEffect(() => {
+    if (currentUser) {
+      // Check if there's a saved redirect path from ProtectedRoute
+      if (userData.redirectAfterLogin) {
+        // Get the redirect path
+        const redirectPath = userData.redirectAfterLogin;
+        // Reset the redirect path so it's not used again
+        resetRedirect();
+        // Navigate to the saved path
+        navigate(redirectPath);
+      } else {
+        // Default redirect if no saved path
+        navigate('/listing');
+      }
+    }
+  }, [currentUser, navigate, userData, resetRedirect]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,7 +54,7 @@ const AuthPage = () => {
           updateUserData({
             lastLoginAt: new Date().toISOString()
           });
-          navigate('/listing');
+          // Navigation will be handled by the useEffect when currentUser updates
         }
       } else {
         // Handle signup - with validation
@@ -60,7 +78,7 @@ const AuthPage = () => {
             displayName: name,
             isNewUser: true
           });
-          navigate('/listing');
+          // Navigation will be handled by the useEffect when currentUser updates
         }
       }
     } catch (err) {

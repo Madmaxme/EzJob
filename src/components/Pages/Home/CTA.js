@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight, CheckCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const CTA = () => {
   const benefits = [
@@ -37,13 +38,19 @@ const CTA = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-              <a href="/listing" className="bg-black text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-gray-900 transition-colors inline-flex items-center justify-center gap-2">
+                <Link 
+                  to="/listing" 
+                  className="bg-black text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-gray-900 transition-colors inline-flex items-center justify-center gap-2"
+                >
                   Find gigs now
                   <ArrowRight size={20} />
-                </a>
-                <a href="/post" className="border-2 border-gray-300 text-gray-800 px-6 py-3 rounded-lg text-lg font-medium hover:bg-gray-100 transition-colors inline-flex items-center justify-center">
+                </Link>
+                <Link 
+                  to="/post" 
+                  className="border-2 border-gray-300 text-gray-800 px-6 py-3 rounded-lg text-lg font-medium hover:bg-gray-100 transition-colors inline-flex items-center justify-center"
+                >
                   Post a gig
-                </a>
+                </Link>
               </div>
             </div>
             

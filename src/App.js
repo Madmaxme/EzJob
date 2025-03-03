@@ -5,7 +5,8 @@ import JobListing from "./components/Pages/Jobs/JobListing";
 import JobTemplate from "./components/Pages/Jobs/JobTemplate";
 import PostJobPage from "./components/Pages/Jobs/PostJob";
 import AuthPage from './components/Pages/AuthPage';
-import WaitlistPage from './components/Pages/Waitlist/WaitlistPage'
+import WaitlistPage from './components/Pages/Waitlist/WaitlistPage';
+import ProtectedRoute from './ProtectedRoute';
 import { AppContextProvider } from './AppContext';
 
 import "./index.css";
@@ -17,10 +18,25 @@ function App() {
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/listing" element={<JobListing />} />
-            <Route path="/job/:id" element={<JobTemplate />} />
+            {/* Protected job listing route */}
+            <Route path="/listing" element={
+              <ProtectedRoute>
+                <JobListing />
+              </ProtectedRoute>
+            } />
+            {/* Protected job detail route */}
+            <Route path="/job/:id" element={
+              <ProtectedRoute>
+                <JobTemplate />
+              </ProtectedRoute>
+            } />
             <Route path="/auth" element={<AuthPage />} />
-            <Route path="/post" element={<PostJobPage />} />
+            {/* Protected job posting route */}
+            <Route path="/post" element={
+              <ProtectedRoute>
+                <PostJobPage />
+              </ProtectedRoute>
+            } />
             <Route path="/waitlist" element={<WaitlistPage />} />
           </Routes>
         </Layout>

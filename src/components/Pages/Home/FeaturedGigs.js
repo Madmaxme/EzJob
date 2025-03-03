@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChevronRight, MapPin } from 'lucide-react';
 import { allJobs, categoryIcons } from '../Jobs/JobData';
+import { Link } from 'react-router-dom';
 
 const FeaturedGigs = () => {
   // Select a few featured jobs from the JobData
@@ -19,13 +20,13 @@ const FeaturedGigs = () => {
               Check out these trending opportunities in your area
             </p>
           </div>
-          <a 
-            href="/listing" 
+          <Link 
+            to="/listing" 
             className="mt-4 md:mt-0 bg-pink-50 hover:bg-pink-100 text-navy-900 font-medium px-5 py-2 rounded-lg flex items-center border border-pink-200 transition-colors"
           >
             View all gigs
             <ChevronRight size={18} className="ml-1" />
-          </a>
+          </Link>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -35,9 +36,10 @@ const FeaturedGigs = () => {
             const Icon = categoryIcons[category] || categoryIcons.General;
             
             return (
-              <div 
+              <Link 
                 key={gig.id} 
-                className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow group"
+                to={`/job/${gig.id}`}
+                className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow group cursor-pointer"
               >
                 {/* Header with color band */}
                 <div className={`h-2 ${
@@ -88,7 +90,7 @@ const FeaturedGigs = () => {
                     )}
                   </div>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>
