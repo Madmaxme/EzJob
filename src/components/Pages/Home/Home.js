@@ -1,7 +1,6 @@
 import React from 'react';
 import Hero from './Hero';
 import HowItWorks from './HowItWorks';
-import FeaturedGigs from './FeaturedGigs';
 import Testimonials from './Testimonials';
 import Stats from './Stats';
 import CTA from './CTA';
@@ -17,7 +16,7 @@ const Home = () => {
         <Partners />
         <Waitlist />
         <HowItWorks />
-        <FeaturedGigs />
+        {/* <FeaturedGigs /> */}
         <Testimonials />
         <Stats />
         <FrequentlyAskedQuestions />
