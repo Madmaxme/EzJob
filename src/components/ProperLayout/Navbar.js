@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAppContext } from "../../AppContext"; // Import AppContext
+import { Link, useNavigate, useLocation } from "react-router-dom"; 
+import { useAppContext } from "../../AppContext"; 
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { currentUser, logout, redirectPath, resetRedirect } = useAppContext();
   const navigate = useNavigate();
+  const location = useLocation(); // Get current location
+
+  // Check if user is on the waitlist page
+  const isWaitlistPage = location.pathname === "/waitlist";
 
   // Define navigation links
   const navLinks = [
@@ -55,111 +59,121 @@ const Navbar = () => {
         </Link>
 
         {/* Navigation Links - Centered */}
-        <div className="hidden md:flex space-x-8 flex-grow justify-center">
-          {navLinks.map((link, index) => (
-            // Only show links that don't require auth, or if user is authenticated
-            (!link.requiresAuth || currentUser) && (
-              <Link 
-                key={index} 
-                to={link.path} 
-                className="text-gray-900 font-semibold hover:text-black transition"
-              >
-                {link.title}
-              </Link>
-            )
-          ))}
-        </div>
+        {!isWaitlistPage && (
+          <div className="hidden md:flex space-x-8 flex-grow justify-center">
+            {navLinks.map((link, index) => (
+              // Only show links that don't require auth, or if user is authenticated
+              (!link.requiresAuth || currentUser) && (
+                <Link 
+                  key={index} 
+                  to={link.path} 
+                  className="text-gray-900 font-semibold hover:text-black transition"
+                >
+                  {link.title}
+                </Link>
+              )
+            ))}
+          </div>
+        )}
 
         {/* Authentication Buttons - Aligned to the Right */}
-        <div className="hidden md:flex">
-          {currentUser ? (
-            <button
-              onClick={handleLogout}
-              className="text-black border border-black px-5 py-2 rounded-lg font-semibold hover:bg-black hover:text-white transition"
-            >
-              Sign Out
-            </button>
-          ) : (
-            <Link
-              to="/auth"
-              className="text-black border border-black px-5 py-2 rounded-lg font-semibold hover:bg-black hover:text-white transition"
-            >
-              Sign In / Sign Up
-            </Link>
-          )}
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden flex items-center p-2 rounded-full hover:bg-gray-100 transition focus:outline-none"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsMenuOpen(!isMenuOpen);
-          }}
-        >
-          <span className="sr-only">Open menu</span>
-          <div className="relative w-6 h-5 flex flex-col justify-between">
-            <span className={`h-0.5 w-6 bg-gray-900 transform transition duration-300 ${isMenuOpen ? "rotate-45 translate-y-2" : ""}`} />
-            <span className={`h-0.5 w-6 bg-gray-900 transform transition duration-300 ${isMenuOpen ? "opacity-0" : "opacity-100"}`} />
-            <span className={`h-0.5 w-6 bg-gray-900 transform transition duration-300 ${isMenuOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+        {!isWaitlistPage && (
+          <div className="hidden md:flex">
+            {currentUser ? (
+              <button
+                onClick={handleLogout}
+                className="text-black border border-black px-5 py-2 rounded-lg font-semibold hover:bg-black hover:text-white transition"
+              >
+                Sign Out
+              </button>
+            ) : (
+              <Link
+                to="/auth"
+                className="text-black border border-black px-5 py-2 rounded-lg font-semibold hover:bg-black hover:text-white transition"
+              >
+                Sign In / Sign Up
+              </Link>
+            )}
           </div>
-        </button>
+        )}
+
+        {/* Mobile Menu Button - Hide on waitlist page */}
+        {!isWaitlistPage && (
+          <button
+            className="md:hidden flex items-center p-2 rounded-full hover:bg-gray-100 transition focus:outline-none"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsMenuOpen(!isMenuOpen);
+            }}
+          >
+            <span className="sr-only">Open menu</span>
+            <div className="relative w-6 h-5 flex flex-col justify-between">
+              <span className={`h-0.5 w-6 bg-gray-900 transform transition duration-300 ${isMenuOpen ? "rotate-45 translate-y-2" : ""}`} />
+              <span className={`h-0.5 w-6 bg-gray-900 transform transition duration-300 ${isMenuOpen ? "opacity-0" : "opacity-100"}`} />
+              <span className={`h-0.5 w-6 bg-gray-900 transform transition duration-300 ${isMenuOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+            </div>
+          </button>
+        )}
       </div>
 
-      {/* Mobile Menu Overlay */}
-      <div className={`fixed inset-0 bg-black bg-opacity-50 z-40 ${isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"}`} onClick={() => setIsMenuOpen(false)} />
+      {/* Mobile Menu Overlay - Hide on waitlist page */}
+      {!isWaitlistPage && (
+        <div className={`fixed inset-0 bg-black bg-opacity-50 z-40 ${isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"}`} onClick={() => setIsMenuOpen(false)} />
+      )}
 
-      {/* Mobile Menu */}
-      <div className={`fixed top-0 right-0 w-4/5 max-w-xs h-full bg-white shadow-2xl transition-transform z-50 ${isMenuOpen ? "translate-x-0" : "translate-x-full"}`}>
-        <div className="p-5 border-b border-gray-200 flex justify-between items-center">
-          <Link to="/" className="text-2xl font-bold text-navy-900">
-            <span className="text-black">Ez</span>Job
-          </Link>
-          <button onClick={() => setIsMenuOpen(false)} className="p-2 rounded-full hover:bg-gray-100">
-            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
+      {/* Mobile Menu - Hide on waitlist page */}
+      {!isWaitlistPage && (
+        <div className={`fixed top-0 right-0 w-4/5 max-w-xs h-full bg-white shadow-2xl transition-transform z-50 ${isMenuOpen ? "translate-x-0" : "translate-x-full"}`}>
+          <div className="p-5 border-b border-gray-200 flex justify-between items-center">
+            <Link to="/" className="text-2xl font-bold text-navy-900">
+              <span className="text-black">Ez</span>Job
+            </Link>
+            <button onClick={() => setIsMenuOpen(false)} className="p-2 rounded-full hover:bg-gray-100">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
 
-        {/* Mobile Navigation Links */}
-        <div className="py-6 px-5 flex flex-col space-y-6">
-          {navLinks.map((link, index) => (
-            // Only show links that don't require auth, or if user is authenticated
-            (!link.requiresAuth || currentUser) && (
-              <Link 
-                key={index} 
-                to={link.path} 
-                className="text-lg font-bold text-gray-900 hover:text-black transition" 
+          {/* Mobile Navigation Links */}
+          <div className="py-6 px-5 flex flex-col space-y-6">
+            {navLinks.map((link, index) => (
+              // Only show links that don't require auth, or if user is authenticated
+              (!link.requiresAuth || currentUser) && (
+                <Link 
+                  key={index} 
+                  to={link.path} 
+                  className="text-lg font-bold text-gray-900 hover:text-black transition" 
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.title}
+                </Link>
+              )
+            ))}
+
+            {/* Mobile Authentication Button */}
+            {currentUser ? (
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setIsMenuOpen(false);
+                }}
+                className="text-black border border-black px-5 py-2 rounded-lg font-semibold hover:bg-black hover:text-white transition"
+              >
+                Sign Out
+              </button>
+            ) : (
+              <Link
+                to="/auth"
+                className="text-black border border-black px-5 py-2 rounded-lg font-semibold hover:bg-black hover:text-white transition"
                 onClick={() => setIsMenuOpen(false)}
               >
-                {link.title}
+                Sign In / Sign Up
               </Link>
-            )
-          ))}
-
-          {/* Mobile Authentication Button */}
-          {currentUser ? (
-            <button
-              onClick={() => {
-                handleLogout();
-                setIsMenuOpen(false);
-              }}
-              className="text-black border border-black px-5 py-2 rounded-lg font-semibold hover:bg-black hover:text-white transition"
-            >
-              Sign Out
-            </button>
-          ) : (
-            <Link
-              to="/auth"
-              className="text-black border border-black px-5 py-2 rounded-lg font-semibold hover:bg-black hover:text-white transition"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Sign In / Sign Up
-            </Link>
-          )}
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </nav>
   );
 };

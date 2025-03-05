@@ -12,22 +12,6 @@ const Footer = () => {
           <p className="text-gray-400 mt-2">Connecting side hustlers and local gigs with ease.</p>
         </div>
 
-        {/* Quick Links */}
-        <div className="mt-8 flex flex-wrap justify-center gap-8">
-          <a href="/privacy" className="text-gray-300 hover:text-white transition-colors duration-200">
-            Privacy Policy
-          </a>
-          <a href="/terms" className="text-gray-300 hover:text-white transition-colors duration-200">
-            Terms of Use
-          </a>
-          <a href="/about" className="text-gray-300 hover:text-white transition-colors duration-200">
-            About Us
-          </a>
-          <a href="/contact" className="text-gray-300 hover:text-white transition-colors duration-200">
-            Contact
-          </a>
-        </div>
-
         {/* Social Media */}
         <div className="mt-8 flex justify-center space-x-6">
           <a 
