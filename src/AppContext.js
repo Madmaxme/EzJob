@@ -96,7 +96,6 @@ export const AppContextProvider = ({ children }) => {
 
   return (
     <AppContext.Provider value={value}>
-      <Analytics/>
       {!loading && children}
       <Analytics/>
     </AppContext.Provider>
