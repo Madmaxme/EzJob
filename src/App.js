@@ -6,8 +6,10 @@ import JobTemplate from "./components/Pages/Jobs/JobTemplate";
 import PostJobPage from "./components/Pages/Jobs/PostJob";
 import AuthPage from './components/Pages/AuthPage';
 import WaitlistPage from './components/Pages/Waitlist/WaitlistPage';
+import SurveyAnalytics from './components/Pages/Waitlist/SurveyAnalytics';
 import ProtectedRoute from './ProtectedRoute';
 import { AppContextProvider } from './AppContext';
+
 
 import "./index.css";
 
@@ -38,6 +40,7 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/waitlist" element={<WaitlistPage />} />
+            <Route path="/analytics" element={<SurveyAnalytics />} />
           </Routes>
         </Layout>
       </Router>

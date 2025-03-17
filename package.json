@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@vercel/analytics": "^1.5.0",
     "chalk": "^5.4.1",
     "cra-template": "1.2.0",
     "firebase": "^11.3.1",
@@ -12,8 +13,10 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.0",
     "react-scripts": "5.0.1",
+    "recharts": "^2.15.1",
     "serve": "^14.2.4",
     "shadcn-ui": "^0.9.4",
+    "typescript": "^5.8.2",
     "web-vitals": "^4.2.4"
   },
   "scripts": {

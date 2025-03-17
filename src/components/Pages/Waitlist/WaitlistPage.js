@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import SurveySelector from './SurveySelector';
-import JobSeekerSurvey from './JobOffererSurvey';
-import JobOffererSurvey from './JobSeekerSurvey';
+import JobSeekerSurvey from './JobSeekerSurvey';
+import JobOffererSurvey from './JobOffererSurvey';
 import SuccessConfirmation from './SuccessConfirmation';
 import { submitJobSeekerSurvey, submitJobOffererSurvey, addToWaitlist } from '../firebaseService';
 

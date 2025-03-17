@@ -7,6 +7,8 @@ import {
   signOut
 } from 'firebase/auth';
 import { auth } from './firebase/firebase';
+import { Analytics } from "@vercel/analytics/react"
+
 
 // Create the context
 const AppContext = createContext();
@@ -94,7 +96,9 @@ export const AppContextProvider = ({ children }) => {
 
   return (
     <AppContext.Provider value={value}>
+      <Analytics/>
       {!loading && children}
+      <Analytics/>
     </AppContext.Provider>
   );
 };
