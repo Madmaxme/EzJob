@@ -625,36 +625,41 @@ const SurveyAnalytics = () => {
         </div>
         
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-4">What payment methods do you prefer?</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart
+        <h3 className="text-xl font-semibold mb-4">What payment methods do you prefer?</h3>
+        <ResponsiveContainer width="100%" height={350}>
+          <PieChart>
+            <Pie
               data={paymentMethods}
-              layout="vertical"
-              margin={{ top: 5, right: 30, left: 150, bottom: 5 }}
+              cx="50%"
+              cy="50%"
+              labelLine={true}
+              label={({ name, percent }) => {
+                // More aggressive truncation for payment methods which might have longer names
+                const displayName = name.length > 20 ? name.substring(0, 17) + '...' : name;
+                return `${displayName}: ${(percent * 100).toFixed(0)}%`;
+              }}
+              outerRadius={100}
+              fill="#8884d8"
+              dataKey="value"
             >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis 
-                dataKey="name" 
-                type="category" 
-                width={140}
-                tick={props => {
-                  const { x, y, payload } = props;
-                  const text = payload.value;
-                  const displayText = text.length > 20 ? text.substring(0, 17) + '...' : text;
-                  
-                  return (
-                    <text x={x} y={y} dy={4} textAnchor="end" fill="#666" fontSize={12}>
-                      {displayText}
-                    </text>
-                  );
-                }}
-              />
-              <Tooltip formatter={(value) => [`${value} responses`, 'Count']} />
-              <Bar dataKey="value" fill="#FFBB28" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+              {paymentMethods.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip formatter={(value) => [`${value} responses`, 'Count']} />
+            <Legend 
+              layout="vertical" 
+              verticalAlign="bottom" 
+              align="center"
+              wrapperStyle={{ paddingTop: 20 }}
+              formatter={(value) => {
+                // Truncate long legend text items
+                return value.length > 25 ? value.substring(0, 22) + '...' : value;
+              }}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
         
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-4">Would you be willing to pay for premium features?</h3>

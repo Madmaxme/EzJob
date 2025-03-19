@@ -61,7 +61,7 @@ const SurveySelector = ({ onSelectSurvey }) => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <button 
-              onClick={() => onSelectSurvey('offerer')}
+              onClick={() => onSelectSurvey('seeker')}
               className="bg-white hover:bg-gray-50 transition-colors p-6 rounded-lg flex flex-col items-center border-2 border-teal-200 hover:border-teal-400 shadow-md hover:shadow-lg"
             >
               <div className="rounded-full bg-teal-100 p-4 mb-4">
@@ -72,7 +72,7 @@ const SurveySelector = ({ onSelectSurvey }) => {
             </button>
             
             <button 
-              onClick={() => onSelectSurvey('seeker')}
+              onClick={() => onSelectSurvey('offerer')}
               className="bg-white hover:bg-gray-50 transition-colors p-6 rounded-lg flex flex-col items-center border-2 border-teal-200 hover:border-teal-400 shadow-md hover:shadow-lg"
             >
               <div className="rounded-full bg-teal-100 p-4 mb-4">
