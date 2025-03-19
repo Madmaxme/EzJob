@@ -300,58 +300,58 @@ const SurveyAnalytics = () => {
     const totalFeedback = feedback.seekers.length + feedback.offerers.length;
     
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-teal-500">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border-l-4 border-teal-500">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-gray-500 text-sm">Total Respondents</p>
-              <p className="text-2xl font-bold text-gray-900">{totalResponses}</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">{totalResponses}</p>
             </div>
             <Users className="text-teal-500" size={24} />
           </div>
-          <div className="mt-4 flex justify-between text-xs">
-            <span className="text-gray-500">Job Seekers: {seekerPercentage}%</span>
+          <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:justify-between text-xs">
+            <span className="text-gray-500 mb-1 sm:mb-0">Job Seekers: {seekerPercentage}%</span>
             <span className="text-gray-500">Job Offerers: {offererPercentage}%</span>
           </div>
         </div>
         
-        <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border-l-4 border-blue-500">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-gray-500 text-sm">Waitlist Total</p>
-              <p className="text-2xl font-bold text-gray-900">{waitlistCount}</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">{waitlistCount}</p>
             </div>
             <Calendar className="text-blue-500" size={24} />
           </div>
-          <div className="mt-4 text-xs">
+          <div className="mt-3 sm:mt-4 text-xs">
             <span className="text-gray-500">People interested in the platform</span>
           </div>
         </div>
         
-        <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border-l-4 border-purple-500">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-gray-500 text-sm">Feedback Received</p>
-              <p className="text-2xl font-bold text-gray-900">{totalFeedback}</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">{totalFeedback}</p>
             </div>
             <FileCheck className="text-purple-500" size={24} />
           </div>
-          <div className="mt-4 text-xs">
+          <div className="mt-3 sm:mt-4 text-xs">
             <span className="text-gray-500">Users who provided comments</span>
           </div>
         </div>
         
-        <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-yellow-500">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md border-l-4 border-yellow-500">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-gray-500 text-sm">Premium Interest</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">
                 {calculatePremiumPercentage()}%
               </p>
             </div>
             <BriefcaseBusiness className="text-yellow-500" size={24} />
           </div>
-          <div className="mt-4 text-xs">
+          <div className="mt-3 sm:mt-4 text-xs">
             <span className="text-gray-500">Users interested in premium features</span>
           </div>
         </div>
@@ -361,30 +361,58 @@ const SurveyAnalytics = () => {
 
   // Render signup trend chart
   const renderSignupTrend = () => {
+    // Process trend data to show fewer intervals (weekly instead of daily)
+    const processedTrendData = signupTrend.length > 14 
+      ? signupTrend.filter((_, index) => index % 5 === 0) // Show every 5th day if we have many data points
+      : signupTrend;
+      
     return (
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+      <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-8">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-semibold">Waitlist Signup Trend</h3>
+          <h3 className="text-lg sm:text-xl font-semibold">Waitlist Signup Trend</h3>
           <TrendingUp className="text-teal-500" size={24} />
         </div>
         
         {signupTrend.length > 0 ? (
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={signupTrend}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis allowDecimals={false} />
-              <Tooltip formatter={(value) => [`${value} signups`, 'Count']} />
-              <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="count" 
-                stroke="#0088FE" 
-                activeDot={{ r: 8 }} 
-                name="Daily Signups"
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="overflow-x-auto pb-10">
+            <div className="min-w-[450px] md:min-w-0">
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart 
+                  data={processedTrendData}
+                  margin={{ top: 20, right: 30, left: 10, bottom: 50 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="date"
+                    tick={{fontSize: 10}}
+                    angle={-30}
+                    textAnchor="end"
+                    height={60}
+                    interval={0}
+                    tickMargin={10}
+                  />
+                  <YAxis 
+                    allowDecimals={false} 
+                    tick={{fontSize: 10}} 
+                    tickMargin={10}
+                  />
+                  <Tooltip formatter={(value) => [`${value} signups`, 'Count']} />
+                  <Legend 
+                    wrapperStyle={{fontSize: '10px', marginTop: '10px'}} 
+                    verticalAlign="top"
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="count" 
+                    stroke="#0088FE" 
+                    activeDot={{ r: 6 }} 
+                    name="Daily Signups"
+                    strokeWidth={2}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         ) : (
           <p className="text-gray-500 text-center py-8">No trend data available.</p>
         )}
@@ -418,20 +446,61 @@ const SurveyAnalytics = () => {
     });
     
     return (
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-        <h3 className="text-xl font-semibold mb-4">Premium Features Interest Comparison</h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={willPayComparison}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis allowDecimals={false} />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="jobSeekers" fill="#0088FE" name="Job Seekers" />
-            <Bar dataKey="jobOfferers" fill="#00C49F" name="Job Offerers" />
-          </BarChart>
-        </ResponsiveContainer>
+      <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-8">
+        <h3 className="text-lg sm:text-xl font-semibold mb-4">Premium Features Interest Comparison</h3>
+        <div className="overflow-x-auto pb-6">
+          <div className="min-w-[350px] md:min-w-0">
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart 
+                data={willPayComparison}
+                margin={{ top: 5, right: 20, left: 10, bottom: 60 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="name" 
+                  tick={{fontSize: 10}}
+                  angle={-35} 
+                  textAnchor="end"
+                  height={70}
+                  interval={0}
+                />
+                <YAxis allowDecimals={false} tick={{fontSize: 10}} />
+                <Tooltip />
+                <Legend 
+                  wrapperStyle={{fontSize: '10px', paddingTop: '10px'}}
+                  verticalAlign="top"
+                  height={20}
+                />
+                <Bar dataKey="jobSeekers" fill="#0088FE" name="Job Seekers" />
+                <Bar dataKey="jobOfferers" fill="#00C49F" name="Job Offerers" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </div>
+    );
+  };
+
+  // Helper function for pie chart labels
+  const renderPieChartLabel = ({ name, percent, cx, cy, midAngle, innerRadius, outerRadius }) => {
+    // For mobile view, place labels inside the pie slices
+    const RADIAN = Math.PI / 180;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+    
+    return (
+      <text 
+        x={x} 
+        y={y} 
+        fill="#fff" 
+        fontSize="10"
+        fontWeight="bold"
+        textAnchor="middle" 
+        dominantBaseline="central"
+      >
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
     );
   };
 
@@ -447,84 +516,98 @@ const SurveyAnalytics = () => {
     
     return (
       <div className="space-y-8">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-4">What types of jobs interest you the most?</h3>
-          <ResponsiveContainer width="100%" height={350}>
-            <PieChart>
-              <Pie
-                data={jobTypes}
-                cx="50%"
-                cy="50%"
-                labelLine={true}
-                label={({ name, percent }) => `${name.length > 30 ? name.substring(0, 27) + '...' : name}: ${(percent * 100).toFixed(0)}%`}
-                outerRadius={120}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {jobTypes.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => [`${value} responses`, 'Count']} />
-              <Legend layout="vertical" verticalAlign="bottom" align="center" />
-            </PieChart>
-          </ResponsiveContainer>
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+          <h3 className="text-lg sm:text-xl font-semibold mb-4">What types of jobs interest you the most?</h3>
+          <div className="overflow-x-auto pb-6">
+            <div className="min-w-[300px] md:min-w-0">
+              <ResponsiveContainer width="100%" height={350}>
+                <PieChart margin={{ top: 0, right: 0, bottom: 20, left: 0 }}>
+                  <Pie
+                    data={jobTypes}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={renderPieChartLabel}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {jobTypes.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value, name) => [`${value} responses`, name]} />
+                  <Legend 
+                    layout="vertical" 
+                    verticalAlign="bottom" 
+                    align="center"
+                    wrapperStyle={{fontSize: '10px', paddingTop: '15px'}} 
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
         
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-4">What would make you use this platform instead of other job-finding methods?</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart
-              data={reasons}
-              layout="vertical"
-              margin={{ top: 5, right: 30, left: 150, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis 
-                dataKey="name" 
-                type="category" 
-                width={140}
-                tick={props => {
-                  const { x, y, payload } = props;
-                  const text = payload.value;
-                  const displayText = text.length > 20 ? text.substring(0, 17) + '...' : text;
-                  
-                  return (
-                    <text x={x} y={y} dy={4} textAnchor="end" fill="#666" fontSize={12}>
-                      {displayText}
-                    </text>
-                  );
-                }}
-              />
-              <Tooltip formatter={(value) => [`${value} responses`, 'Count']} />
-              <Bar dataKey="value" fill="#00C49F" />
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+          <h3 className="text-lg sm:text-xl font-semibold mb-4">What would make you use this platform?</h3>
+          <div className="overflow-x-auto pb-6">
+            <div className="min-w-[300px] md:min-w-0">
+              <ResponsiveContainer width="100%" height={350}>
+                <PieChart margin={{ top: 0, right: 0, bottom: 20, left: 0 }}>
+                  <Pie
+                    data={reasons}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={renderPieChartLabel}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {reasons.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value, name) => [`${value} responses`, name]} />
+                  <Legend 
+                    layout="vertical" 
+                    verticalAlign="bottom" 
+                    align="center"
+                    wrapperStyle={{fontSize: '10px', paddingTop: '15px'}} 
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
         
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Would you be willing to pay for premium features?</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={willPay}
-                cx="50%"
-                cy="50%"
-                labelLine={true}
-                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {willPay.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => [`${value} responses`, 'Count']} />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+          <h3 className="text-lg sm:text-xl font-semibold mb-4">Would you pay for premium features?</h3>
+          <div className="overflow-x-auto pb-6">
+            <div className="min-w-[280px] md:min-w-0">
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={willPay}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={renderPieChartLabel}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {willPay.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => [`${value} responses`, 'Count']} />
+                  <Legend wrapperStyle={{fontSize: '10px', paddingTop: '15px'}} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -544,145 +627,163 @@ const SurveyAnalytics = () => {
     
     return (
       <div className="space-y-8">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-4">What type of jobs do you usually offer?</h3>
-          <ResponsiveContainer width="100%" height={350}>
-            <PieChart>
-              <Pie
-                data={jobTypes}
-                cx="50%"
-                cy="50%"
-                labelLine={true}
-                label={({ name, percent }) => `${name.length > 30 ? name.substring(0, 27) + '...' : name}: ${(percent * 100).toFixed(0)}%`}
-                outerRadius={120}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {jobTypes.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => [`${value} responses`, 'Count']} />
-              <Legend layout="vertical" verticalAlign="bottom" align="center" />
-            </PieChart>
-          </ResponsiveContainer>
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+          <h3 className="text-lg sm:text-xl font-semibold mb-4">What type of jobs do you usually offer?</h3>
+          <div className="overflow-x-auto pb-6">
+            <div className="min-w-[300px] md:min-w-0">
+              <ResponsiveContainer width="100%" height={350}>
+                <PieChart margin={{ top: 0, right: 0, bottom: 20, left: 0 }}>
+                  <Pie
+                    data={jobTypes}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={renderPieChartLabel}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {jobTypes.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => [`${value} responses`, 'Count']} />
+                  <Legend 
+                    layout="vertical" 
+                    verticalAlign="bottom" 
+                    align="center"
+                    wrapperStyle={{fontSize: '10px', paddingTop: '15px'}} 
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
         
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Why do you prefer using this platform to find workers?</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart
-              data={reasons}
-              layout="vertical"
-              margin={{ top: 5, right: 30, left: 150, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis 
-                dataKey="name" 
-                type="category" 
-                width={140}
-                tick={props => {
-                  const { x, y, payload } = props;
-                  const text = payload.value;
-                  const displayText = text.length > 20 ? text.substring(0, 17) + '...' : text;
-                  
-                  return (
-                    <text x={x} y={y} dy={4} textAnchor="end" fill="#666" fontSize={12}>
-                      {displayText}
-                    </text>
-                  );
-                }}
-              />
-              <Tooltip formatter={(value) => [`${value} responses`, 'Count']} />
-              <Bar dataKey="value" fill="#00C49F" />
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+          <h3 className="text-lg sm:text-xl font-semibold mb-4">Why do you prefer this platform?</h3>
+          <div className="overflow-x-auto pb-6">
+            <div className="min-w-[300px] md:min-w-0">
+              <ResponsiveContainer width="100%" height={350}>
+                <PieChart margin={{ top: 0, right: 0, bottom: 20, left: 0 }}>
+                  <Pie
+                    data={reasons}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={renderPieChartLabel}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {reasons.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value, name) => [`${value} responses`, name]} />
+                  <Legend 
+                    layout="vertical" 
+                    verticalAlign="bottom" 
+                    align="center"
+                    wrapperStyle={{fontSize: '10px', paddingTop: '15px'}} 
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
         
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-4">What is your typical budget for hiring workers?</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={budget}
-                cx="50%"
-                cy="50%"
-                labelLine={true}
-                label={({ name, percent }) => `${name.length > 30 ? name.substring(0, 27) + '...' : name}: ${(percent * 100).toFixed(0)}%`}
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {budget.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => [`${value} responses`, 'Count']} />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+          <h3 className="text-lg sm:text-xl font-semibold mb-4">What is your typical hiring budget?</h3>
+          <div className="overflow-x-auto pb-6">
+            <div className="min-w-[280px] md:min-w-0">
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={budget}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={renderPieChartLabel}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {budget.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => [`${value} responses`, 'Count']} />
+                  <Legend wrapperStyle={{fontSize: '10px', paddingTop: '15px'}} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
         
-        <div className="bg-white p-6 rounded-lg shadow-md">
-        <h3 className="text-xl font-semibold mb-4">What payment methods do you prefer?</h3>
-        <ResponsiveContainer width="100%" height={350}>
-          <PieChart>
-            <Pie
-              data={paymentMethods}
-              cx="50%"
-              cy="50%"
-              labelLine={true}
-              label={({ name, percent }) => {
-                // More aggressive truncation for payment methods which might have longer names
-                const displayName = name.length > 20 ? name.substring(0, 17) + '...' : name;
-                return `${displayName}: ${(percent * 100).toFixed(0)}%`;
-              }}
-              outerRadius={100}
-              fill="#8884d8"
-              dataKey="value"
-            >
-              {paymentMethods.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip formatter={(value) => [`${value} responses`, 'Count']} />
-            <Legend 
-              layout="vertical" 
-              verticalAlign="bottom" 
-              align="center"
-              wrapperStyle={{ paddingTop: 20 }}
-              formatter={(value) => {
-                // Truncate long legend text items
-                return value.length > 25 ? value.substring(0, 22) + '...' : value;
-              }}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+          <h3 className="text-lg sm:text-xl font-semibold mb-4">What payment methods do you prefer?</h3>
+          <div className="overflow-x-auto pb-6">
+            <div className="min-w-[280px] md:min-w-0">
+              <ResponsiveContainer width="100%" height={320}>
+                <PieChart>
+                  <Pie
+                    data={paymentMethods}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={renderPieChartLabel}
+                    outerRadius={90}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {paymentMethods.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => [`${value} responses`, 'Count']} />
+                  <Legend 
+                    layout="vertical" 
+                    verticalAlign="bottom" 
+                    align="center"
+                    wrapperStyle={{ fontSize: '10px', paddingTop: '15px' }}
+                    formatter={(value) => {
+                      // Truncate long legend text items
+                      return value.length > 20 ? value.substring(0, 17) + '...' : value;
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
         
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Would you be willing to pay for premium features?</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={willPay}
-                cx="50%"
-                cy="50%"
-                labelLine={true}
-                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {willPay.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => [`${value} responses`, 'Count']} />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+          <h3 className="text-lg sm:text-xl font-semibold mb-4">Would you pay for premium features?</h3>
+          <div className="overflow-x-auto pb-6">
+            <div className="min-w-[280px] md:min-w-0">
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={willPay}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={renderPieChartLabel}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {willPay.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => [`${value} responses`, 'Count']} />
+                  <Legend wrapperStyle={{fontSize: '10px', paddingTop: '15px'}} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -703,8 +804,8 @@ const SurveyAnalytics = () => {
     }
     
     return (
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h3 className="text-xl font-semibold mb-4">User Feedback</h3>
+      <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+        <h3 className="text-lg sm:text-xl font-semibold mb-4">User Feedback</h3>
         <div className="space-y-4">
           {allFeedback.map((item, index) => {
             const date = item.submittedAt ? 
@@ -712,10 +813,10 @@ const SurveyAnalytics = () => {
               'Unknown date';
             
             return (
-              <div key={index} className="border-l-4 border-teal-500 pl-4 py-2">
-                <p className="text-gray-900">{item.feedback}</p>
-                <div className="flex justify-between mt-2 text-sm text-gray-500">
-                  <span>{item.email}</span>
+              <div key={index} className="border-l-4 border-teal-500 pl-3 sm:pl-4 py-2">
+                <p className="text-gray-900 text-sm sm:text-base">{item.feedback}</p>
+                <div className="flex flex-col sm:flex-row sm:justify-between mt-2 text-xs sm:text-sm text-gray-500">
+                  <span className="truncate mb-1 sm:mb-0">{item.email}</span>
                   <span>{date}</span>
                 </div>
               </div>
@@ -728,10 +829,10 @@ const SurveyAnalytics = () => {
 
   // Main render function
   return (
-    <div className="min-h-screen bg-pink-50 py-8 px-4">
+    <div className="min-h-screen bg-pink-50 pt-16 pb-8 px-4 sm:px-6 md:px-8">
       <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg border border-teal-200 p-6 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Survey Analytics Dashboard</h1>
+        <div className="bg-white rounded-lg shadow-lg border border-teal-200 p-4 sm:p-6 mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Survey Analytics Dashboard</h1>
           <p className="text-gray-600 mb-6 border-b border-gray-200 pb-4">
             Insights from waitlist survey responses for Job Seekers and Job Offerers
           </p>
@@ -747,9 +848,9 @@ const SurveyAnalytics = () => {
           ) : (
             <>
               {/* Navigation tabs */}
-              <div className="flex flex-wrap space-x-2 mb-6">
+              <div className="flex flex-wrap gap-2 mb-6">
                 <button 
-                  className={`px-4 py-2 rounded-lg mb-2 ${activeTab === 'summary' 
+                  className={`px-3 sm:px-4 py-2 rounded-lg mb-1 sm:mb-2 text-sm sm:text-base ${activeTab === 'summary' 
                     ? 'bg-teal-500 text-white' 
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
                   onClick={() => setActiveTab('summary')}
@@ -757,7 +858,7 @@ const SurveyAnalytics = () => {
                   Summary
                 </button>
                 <button 
-                  className={`px-4 py-2 rounded-lg mb-2 ${activeTab === 'seekers' 
+                  className={`px-3 sm:px-4 py-2 rounded-lg mb-1 sm:mb-2 text-sm sm:text-base ${activeTab === 'seekers' 
                     ? 'bg-teal-500 text-white' 
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
                   onClick={() => setActiveTab('seekers')}
@@ -765,7 +866,7 @@ const SurveyAnalytics = () => {
                   Job Seekers
                 </button>
                 <button 
-                  className={`px-4 py-2 rounded-lg mb-2 ${activeTab === 'offerers' 
+                  className={`px-3 sm:px-4 py-2 rounded-lg mb-1 sm:mb-2 text-sm sm:text-base ${activeTab === 'offerers' 
                     ? 'bg-teal-500 text-white' 
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
                   onClick={() => setActiveTab('offerers')}
@@ -773,7 +874,7 @@ const SurveyAnalytics = () => {
                   Job Offerers
                 </button>
                 <button 
-                  className={`px-4 py-2 rounded-lg mb-2 ${activeTab === 'feedback' 
+                  className={`px-3 sm:px-4 py-2 rounded-lg mb-1 sm:mb-2 text-sm sm:text-base ${activeTab === 'feedback' 
                     ? 'bg-teal-500 text-white' 
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
                   onClick={() => setActiveTab('feedback')}
