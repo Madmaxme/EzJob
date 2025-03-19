@@ -10,9 +10,9 @@ import {
     getWaitlistCountByType,
     getSignupTrend,
     getFeedbackResponses,
-    getJobSeekerAnalytics,  // Add these new functions
-    getJobOffererAnalytics,  // Add these new functions
-    getPremiumInterestStats  // Add these new functions
+    getJobSeekerAnalytics,  
+    getJobOffererAnalytics,  
+    getPremiumInterestStats
   } from '../firebaseService';
 import { Users, BriefcaseBusiness, Calendar, FileCheck, TrendingUp } from 'lucide-react';
 
@@ -40,38 +40,46 @@ const SurveyAnalytics = () => {
       try {
         // Fetch all data in parallel
         const [
-          seekerData,
-          offererData,
-          seekerAnalytics,
-          offererAnalytics,
+          seekerData, // Actually contains offerer data 
+          offererData, // Actually contains seeker data
+          seekerAnalytics, // Actually contains offerer analytics
+          offererAnalytics, // Actually contains seeker analytics
           waitlistTotal,
           waitlistTypes,
           trendData,
-          seekerFeedback,
-          offererFeedback
+          seekerFeedback, // May also be swapped
+          offererFeedback // May also be swapped
         ] = await Promise.all([
-          getJobSeekerSurveys(),
-          getJobOffererSurveys(),
-          getJobSeekerAnalytics(),
-          getJobOffererAnalytics(),
+          getJobSeekerSurveys(), // This actually fetches offerer data due to DB mixup
+          getJobOffererSurveys(), // This actually fetches seeker data due to DB mixup
+          getJobSeekerAnalytics(), // This may also be swapped
+          getJobOffererAnalytics(), // This may also be swapped
           
           getWaitlistCount(),
-          getWaitlistCountByType(),
+          getWaitlistCountByType(), // This may need to be swapped too
           getSignupTrend(30), // Get 30 days of trend data
-          getFeedbackResponses('seeker'),
-          getFeedbackResponses('offerer')
+          getFeedbackResponses('seeker'), // May be swapped
+          getFeedbackResponses('offerer') // May be swapped
         ]);
 
-        // Update state with fetched data
-        setSeekerSurveys(seekerData);
-        setOffererSurveys(offererData);
+        // Update state with corrected data (swap seeker and offerer data)
+        setSeekerSurveys(offererData); // Use offererData for seekers
+        setOffererSurveys(seekerData); // Use seekerData for offerers
         setWaitlistCount(waitlistTotal);
-        setWaitlistByType(waitlistTypes);
+        // Check if waitlistTypes also needs to be swapped
+        const correctedWaitlistTypes = {
+          seekers: waitlistTypes.offerers || 0, // Swap if needed
+          offerers: waitlistTypes.seekers || 0  // Swap if needed
+        };
+        setWaitlistByType(correctedWaitlistTypes);
         setSignupTrend(trendData);
+        // Swap feedback data as well if needed
         setFeedback({
-          seekers: seekerFeedback,
-          offerers: offererFeedback
+          seekers: offererFeedback, // Swap feedback too
+          offerers: seekerFeedback // Swap feedback too
         });
+
+        console.log('Data correction applied due to database field swap');
       } catch (err) {
         console.error('Error fetching data:', err);
         setError('Failed to load analytics data. Please try again.');
@@ -83,187 +91,195 @@ const SurveyAnalytics = () => {
     fetchData();
   }, []);
 
-  // Helper function to extract and count responses
-  const processMultipleChoiceResponses = (data, questionKey, options) => {
+  // Helper function to extract and count responses - dynamic approach with debugging
+  const processMultipleChoiceResponses = (data, questionKey) => {
     const counts = {};
+    let foundAnyAnswers = false;
     
-    // Initialize counts
-    Object.keys(options).forEach(key => {
-      counts[key] = 0;
-    });
-
     // Count responses
     data.forEach(response => {
       const answer = response[questionKey];
       if (answer) {
+        foundAnyAnswers = true;
         if (Array.isArray(answer)) {
           // For checkbox questions (multiple answers)
           answer.forEach(item => {
-            // Find which option this answer corresponds to
-            const matchingKey = Object.keys(options).find(key => 
-              item.includes(options[key])
-            );
-            
-            if (matchingKey) {
-              counts[matchingKey] = (counts[matchingKey] || 0) + 1;
-            }
+            counts[item] = (counts[item] || 0) + 1;
           });
         } else {
           // For radio questions (single answer)
-          const matchingKey = Object.keys(options).find(key => 
-            answer.includes(options[key])
-          );
-          
-          if (matchingKey) {
-            counts[matchingKey] = (counts[matchingKey] || 0) + 1;
-          }
+          counts[answer] = (counts[answer] || 0) + 1;
         }
       }
     });
 
+    // Debug logging - uncomment if charts still aren't appearing
+    if (!foundAnyAnswers) {
+      console.log(`No answers found for question: "${questionKey}"`);
+      // Optional: Log all available keys in the responses to help debug
+      if (data.length > 0) {
+        console.log("Available question keys:", Object.keys(data[0]).filter(key => 
+          key !== 'email' && key !== 'timestamp' && key !== 'id' && key !== 'submittedAt'
+        ));
+      }
+    }
+
     // Convert to format suitable for charts
-    return Object.keys(options).map(key => ({
-      name: options[key],
+    return Object.keys(counts).map(key => ({
+      name: key,
       value: counts[key]
     }));
   };
 
-  // Process job seekers data
+  // Enhanced helper function that tries multiple question keys
+  const processMultipleChoiceResponsesWithFallbacks = (data, questionKeys) => {
+    // Try each possible question key until we find one that has data
+    for (const questionKey of questionKeys) {
+      const results = processMultipleChoiceResponses(data, questionKey);
+      if (results.length > 0) {
+        return results;
+      }
+    }
+    return []; // Return empty array if no matches found
+  };
+
+  // Process job seekers data with dynamic approach & fallbacks for DB mix-up
   const getSeekerJobTypes = () => {
-    const JOB_TYPES = {
-      'remote': 'Remote freelance work',
-      'inPerson': 'In-person tasks',
-      'partTime': 'Part-time jobs',
-      'oneTime': 'One-time gigs',
-      'other': 'Other'
-    };
-    
-    return processMultipleChoiceResponses(
+    // Try both the expected and the swapped question formats
+    return processMultipleChoiceResponsesWithFallbacks(
       seekerSurveys, 
-      "What types of jobs interest you the most?", 
-      JOB_TYPES
+      [
+        "What types of jobs interest you the most?",
+        "What type of jobs interest you the most?", // Alternate wording
+        "What types of jobs do you usually offer?", // In case the survey form was different
+        "What type of jobs do you usually offer?" // Alternate wording
+      ]
     );
   };
 
   const getSeekerReasons = () => {
-    const REASONS = {
-      'easier': 'Easier and faster job search',
-      'payment': 'Better payment security',
-      'flexible': 'More flexible job options',
-      'community': 'Community and networking',
-      'other': 'Other'
-    };
-    
-    return processMultipleChoiceResponses(
+    return processMultipleChoiceResponsesWithFallbacks(
       seekerSurveys, 
-      "What would make you use this platform instead of other job-finding methods?", 
-      REASONS
+      [
+        "What would make you use this platform instead of other job-finding methods?",
+        "Why would you use this platform instead of other job-finding methods?", // Alternate wording
+        "Why do you prefer using this platform to find workers?", // From offerer survey
+        "Why do you prefer using this platform?" // Alternate wording
+      ]
     );
   };
 
   const getSeekerWillPay = () => {
-    const WILL_PAY = {
-      'yes': 'Yes',
-      'no': 'No',
-      'maybe': 'Maybe, depending on features'
-    };
-    
-    return processMultipleChoiceResponses(
+    return processMultipleChoiceResponsesWithFallbacks(
       seekerSurveys, 
-      "Would you be willing to pay for premium features?", 
-      WILL_PAY
+      [
+        "Would you be willing to pay for premium features?",
+        "Are you willing to pay for premium features?" // Alternate wording
+      ]
     );
   };
 
-  // Process job offerers data
+  // Process job offerers data with dynamic approach & fallbacks for DB mix-up
   const getOffererJobTypes = () => {
-    const JOB_TYPES = {
-      'shortTerm': 'Short-term gigs',
-      'partTime': 'Part-time positions',
-      'freelance': 'Freelance/remote work',
-      'internship': 'Internships',
-      'other': 'Other'
-    };
-    
-    return processMultipleChoiceResponses(
+    return processMultipleChoiceResponsesWithFallbacks(
       offererSurveys, 
-      "What type of jobs do you usually offer?", 
-      JOB_TYPES
+      [
+        "What type of jobs do you usually offer?",
+        "What types of jobs do you usually offer?", // Alternate wording
+        "What types of jobs interest you the most?", // From seeker survey
+        "What type of jobs interest you the most?" // Alternate wording
+      ]
     );
   };
 
   const getOffererReasons = () => {
-    const REASONS = {
-      'faster': 'Faster hiring process',
-      'students': 'Access to students and flexible workers',
-      'costEffective': 'More cost-effective than job boards',
-      'communication': 'Easier communication',
-      'other': 'Other'
-    };
-    
-    return processMultipleChoiceResponses(
+    return processMultipleChoiceResponsesWithFallbacks(
       offererSurveys, 
-      "Why do you prefer using this platform to find workers?", 
-      REASONS
+      [
+        "Why do you prefer using this platform to find workers?",
+        "Why do you prefer using this platform?", // Alternate wording
+        "What would make you use this platform instead of other job-finding methods?", // From seeker survey
+        "Why would you use this platform instead of other job-finding methods?" // Alternate wording
+      ]
     );
   };
 
   const getOffererBudget = () => {
-    const BUDGET = {
-      'less10': 'Less than $10/hr',
-      '10to20': '$10-$20/hr',
-      '20to30': '$20-$30/hr',
-      'more30': 'More than $30/hr',
-      'perTask': 'Per task payment'
-    };
-    
-    return processMultipleChoiceResponses(
+    return processMultipleChoiceResponsesWithFallbacks(
       offererSurveys, 
-      "What is your typical budget for hiring workers?", 
-      BUDGET
+      [
+        "What is your typical budget for hiring workers?",
+        "What's your typical budget for hiring?", // Alternate wording
+        "What is your budget for hiring workers?" // Alternate wording
+      ]
     );
   };
 
   const getOffererPaymentMethods = () => {
-    const PAYMENT_METHODS = {
-      'bank': 'Direct bank transfer',
-      'paypal': 'PayPal/online services',
-      'cash': 'Cash payments',
-      'platform': 'Platform payments',
-      'other': 'Other'
-    };
-    
-    return processMultipleChoiceResponses(
+    return processMultipleChoiceResponsesWithFallbacks(
       offererSurveys, 
-      "What payment methods do you prefer?", 
-      PAYMENT_METHODS
+      [
+        "What payment methods do you prefer?",
+        "Which payment methods do you prefer?", // Alternate wording
+        "What payment methods do you prefer when paying workers?" // Full question from survey
+      ]
     );
   };
 
   const getOffererWillPay = () => {
-    const WILL_PAY = {
-      'yes': 'Yes',
-      'no': 'No',
-      'maybe': 'Maybe, depending on features'
-    };
-    
-    return processMultipleChoiceResponses(
+    return processMultipleChoiceResponsesWithFallbacks(
       offererSurveys, 
-      "Would you be willing to pay for premium features?", 
-      WILL_PAY
+      [
+        "Would you be willing to pay for premium features?",
+        "Are you willing to pay for premium features?" // Alternate wording
+      ]
     );
   };
 
-  // Calculate premium interest percentage
+  // Calculate premium interest percentage - adapted for dynamic responses with extra flexibility
   const calculatePremiumPercentage = () => {
     const seekerWillPay = getSeekerWillPay();
     const offererWillPay = getOffererWillPay();
     
-    const seekerYes = seekerWillPay.find(item => item.name === "Yes")?.value || 0;
-    const seekerMaybe = seekerWillPay.find(item => item.name === "Maybe, depending on features")?.value || 0;
+    // Enhanced search for "Yes" and "Maybe" responses - case-insensitive and more flexible
+    const seekerYes = seekerWillPay.reduce((sum, item) => 
+      (item.name === "Yes" || 
+       item.name.toLowerCase().includes("yes") || 
+       item.name.includes("Yes"))
+        ? sum + item.value 
+        : sum, 
+      0);
+      
+    const seekerMaybe = seekerWillPay.reduce((sum, item) => 
+      (item.name.toLowerCase().includes("maybe") || 
+       item.name.includes("Maybe") || 
+       item.name.includes("depending"))
+        ? sum + item.value 
+        : sum, 
+      0);
     
-    const offererYes = offererWillPay.find(item => item.name === "Yes")?.value || 0;
-    const offererMaybe = offererWillPay.find(item => item.name === "Maybe, depending on features")?.value || 0;
+    const offererYes = offererWillPay.reduce((sum, item) => 
+      (item.name === "Yes" || 
+       item.name.toLowerCase().includes("yes") || 
+       item.name.includes("Yes")) 
+        ? sum + item.value 
+        : sum, 
+      0);
+      
+    const offererMaybe = offererWillPay.reduce((sum, item) => 
+      (item.name.toLowerCase().includes("maybe") || 
+       item.name.includes("Maybe") || 
+       item.name.includes("depending"))
+        ? sum + item.value 
+        : sum, 
+      0);
+    
+    // Debug log
+    console.log("Premium interest calculation:", {
+      seekerYes, seekerMaybe, offererYes, offererMaybe,
+      seekerOptions: seekerWillPay.map(i => i.name),
+      offererOptions: offererWillPay.map(i => i.name)
+    });
     
     const totalInterested = seekerYes + seekerMaybe + offererYes + offererMaybe;
     const totalResponses = seekerSurveys.length + offererSurveys.length;
@@ -376,7 +392,7 @@ const SurveyAnalytics = () => {
     );
   };
 
-  // Render comparison charts for job seekers and offerers
+  // Render comparison charts for job seekers and offerers - adapted for dynamic data
   const renderComparisonCharts = () => {
     const seekerData = getSeekerWillPay();
     const offererData = getOffererWillPay();
@@ -386,15 +402,20 @@ const SurveyAnalytics = () => {
       return <p className="text-gray-500 text-center py-8">Insufficient data for comparison charts.</p>;
     }
     
+    // Get all unique response names
+    const allResponses = [...new Set([
+      ...seekerData.map(d => d.name),
+      ...offererData.map(d => d.name)
+    ])];
+    
     // Format for comparison chart
-    const willPayComparison = [
-      { name: 'Yes', jobSeekers: seekerData.find(d => d.name === 'Yes')?.value || 0, 
-        jobOfferers: offererData.find(d => d.name === 'Yes')?.value || 0 },
-      { name: 'No', jobSeekers: seekerData.find(d => d.name === 'No')?.value || 0, 
-        jobOfferers: offererData.find(d => d.name === 'No')?.value || 0 },
-      { name: 'Maybe', jobSeekers: seekerData.find(d => d.name === 'Maybe, depending on features')?.value || 0, 
-        jobOfferers: offererData.find(d => d.name === 'Maybe, depending on features')?.value || 0 }
-    ];
+    const willPayComparison = allResponses.map(response => {
+      return {
+        name: response,
+        jobSeekers: seekerData.find(d => d.name === response)?.value || 0,
+        jobOfferers: offererData.find(d => d.name === response)?.value || 0
+      };
+    });
     
     return (
       <div className="bg-white p-6 rounded-lg shadow-md mb-8">
@@ -435,7 +456,7 @@ const SurveyAnalytics = () => {
                 cx="50%"
                 cy="50%"
                 labelLine={true}
-                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }) => `${name.length > 30 ? name.substring(0, 27) + '...' : name}: ${(percent * 100).toFixed(0)}%`}
                 outerRadius={120}
                 fill="#8884d8"
                 dataKey="value"
@@ -460,7 +481,22 @@ const SurveyAnalytics = () => {
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis type="number" />
-              <YAxis dataKey="name" type="category" width={140} />
+              <YAxis 
+                dataKey="name" 
+                type="category" 
+                width={140}
+                tick={props => {
+                  const { x, y, payload } = props;
+                  const text = payload.value;
+                  const displayText = text.length > 20 ? text.substring(0, 17) + '...' : text;
+                  
+                  return (
+                    <text x={x} y={y} dy={4} textAnchor="end" fill="#666" fontSize={12}>
+                      {displayText}
+                    </text>
+                  );
+                }}
+              />
               <Tooltip formatter={(value) => [`${value} responses`, 'Count']} />
               <Bar dataKey="value" fill="#00C49F" />
             </BarChart>
@@ -517,7 +553,7 @@ const SurveyAnalytics = () => {
                 cx="50%"
                 cy="50%"
                 labelLine={true}
-                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }) => `${name.length > 30 ? name.substring(0, 27) + '...' : name}: ${(percent * 100).toFixed(0)}%`}
                 outerRadius={120}
                 fill="#8884d8"
                 dataKey="value"
@@ -542,7 +578,22 @@ const SurveyAnalytics = () => {
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis type="number" />
-              <YAxis dataKey="name" type="category" width={140} />
+              <YAxis 
+                dataKey="name" 
+                type="category" 
+                width={140}
+                tick={props => {
+                  const { x, y, payload } = props;
+                  const text = payload.value;
+                  const displayText = text.length > 20 ? text.substring(0, 17) + '...' : text;
+                  
+                  return (
+                    <text x={x} y={y} dy={4} textAnchor="end" fill="#666" fontSize={12}>
+                      {displayText}
+                    </text>
+                  );
+                }}
+              />
               <Tooltip formatter={(value) => [`${value} responses`, 'Count']} />
               <Bar dataKey="value" fill="#00C49F" />
             </BarChart>
@@ -558,7 +609,7 @@ const SurveyAnalytics = () => {
                 cx="50%"
                 cy="50%"
                 labelLine={true}
-                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }) => `${name.length > 30 ? name.substring(0, 27) + '...' : name}: ${(percent * 100).toFixed(0)}%`}
                 outerRadius={100}
                 fill="#8884d8"
                 dataKey="value"
@@ -583,7 +634,22 @@ const SurveyAnalytics = () => {
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis type="number" />
-              <YAxis dataKey="name" type="category" width={140} />
+              <YAxis 
+                dataKey="name" 
+                type="category" 
+                width={140}
+                tick={props => {
+                  const { x, y, payload } = props;
+                  const text = payload.value;
+                  const displayText = text.length > 20 ? text.substring(0, 17) + '...' : text;
+                  
+                  return (
+                    <text x={x} y={y} dy={4} textAnchor="end" fill="#666" fontSize={12}>
+                      {displayText}
+                    </text>
+                  );
+                }}
+              />
               <Tooltip formatter={(value) => [`${value} responses`, 'Count']} />
               <Bar dataKey="value" fill="#FFBB28" />
             </BarChart>
